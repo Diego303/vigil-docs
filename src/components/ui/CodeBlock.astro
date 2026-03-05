@@ -3,14 +3,17 @@ interface Props {
   title: string;
   code: string;
   dark?: boolean;
+  titleHref?: string;
 }
 
-const { title, code, dark = false } = Astro.props;
+const { title, code, dark = false, titleHref } = Astro.props;
 ---
 
 <div class:list={['codeblock', { 'codeblock--dark': dark }]}>
   <div class="codeblock-header">
-    <span class="codeblock-title">{title}</span>
+    <span class="codeblock-title">
+      {titleHref ? <a href={titleHref} target="_blank" rel="noopener noreferrer" class="codeblock-title-link">{title}</a> : title}
+    </span>
     <div class="codeblock-dots">
       <span class="dot"></span>
       <span class="dot"></span>
@@ -45,6 +48,14 @@ const { title, code, dark = false } = Astro.props;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+  }
+  .codeblock-title-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .codeblock-title-link:hover {
+    color: var(--color-accent);
   }
   .codeblock-dots {
     display: flex;

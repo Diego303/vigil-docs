@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vigil ◇ | Galería de Diagramas</title>
+    
+    <!-- Fuentes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración Tailwind del Sistema de Diseño Vigil -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vigil: {
+                            paper: '#F4F7F5', 
+                            surface: '#FFFFFF', 
+                            lines: '#E2E8E4',
+                            ink: '#022C22', 
+                            'ink-light': '#064E3B', 
+                            accent: '#10B981', 
+                            alert: '#EF4444', 
+                        }
+                    },
+                    fontFamily: {
+                        space: ['"Space Grotesk"', 'sans-serif'],
+                        inter: ['"Inter"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px #022C22',
+                        'brutal-alert': '4px 4px 0px 0px #EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: theme('colors.vigil.paper');
+            color: theme('colors.vigil.ink');
+        }
+
+        /* Cuadrícula de Auditoría */
+        .grid-pattern {
+            background-image: 
+                linear-gradient(to right, theme('colors.vigil.lines') 1px, transparent 1px),
+                linear-gradient(to bottom, theme('colors.vigil.lines') 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Sombreado de Trama */
+        .hatch-pattern {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 4px,
+                theme('colors.vigil.lines') 4px,
+                theme('colors.vigil.lines') 5px
+            );
+        }
+
+        .hatch-pattern-alert {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 4px,
+                #FECACA 4px, /* red-200 */
+                #FECACA 5px
+            );
+        }
+
+        /* Marcas de corte (Crop marks) */
+        .crop-mark { position: relative; }
+        .crop-mark::before, .crop-mark::after {
+            content: '';
+            position: absolute;
+            border-color: theme('colors.vigil.ink');
+            border-style: solid;
+            z-index: 10;
+        }
+        .crop-tl::before { top: -6px; left: -6px; width: 12px; height: 12px; border-width: 2px 0 0 2px; }
+        .crop-tr::after { top: -6px; right: -6px; width: 12px; height: 12px; border-width: 2px 2px 0 0; }
+        .crop-bl::before { bottom: -6px; left: -6px; width: 12px; height: 12px; border-width: 0 0 2px 2px; }
+        .crop-br::after { bottom: -6px; right: -6px; width: 12px; height: 12px; border-width: 0 2px 2px 0; }
+    </style>
+</head>
+<body class="font-inter antialiased grid-pattern min-h-screen py-12">
+
+    <div class="max-w-6xl mx-auto px-4 space-y-24">
+        
+        <div class="text-center mb-16 bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal inline-block mx-auto">
+            <h1 class="font-space font-bold text-3xl uppercase text-vigil-ink flex items-center justify-center gap-3">
+                <span>◇</span> Catálogo de Diagramas Vigil
+            </h1>
+            <p class="font-mono text-sm mt-2 text-vigil-ink-light">Copia la sección que prefieras para tu Landing Page.</p>
+        </div>
+
+        <!-- ==========================================
+             DIAGRAMA 1: EL FLUJO / PIPELINE
+             Muestra el "Control de Aduanas" de Vigil
+        =========================================== -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-vigil-ink text-white font-mono text-xs px-2 py-1 font-bold">OPCIÓN 01</span>
+                <h2 class="font-space font-bold text-xl uppercase tracking-tight text-vigil-ink">Flujo de CI/CD (El Control de Aduanas)</h2>
+            </div>
+            <p class="font-inter text-vigil-ink-light mb-8 max-w-2xl">Ideal para ilustrar rápidamente qué hace Vigil. Funciona como un Quality Gate antes de integrar código generado por IA a tu repositorio.</p>
+
+            <div class="bg-vigil-surface border-2 border-vigil-ink p-8 md:p-12 shadow-brutal crop-mark crop-tl crop-br">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 relative">
+                    
+                    <!-- Box 1: AI Agent -->
+                    <div class="w-full md:w-1/4 border-2 border-vigil-ink bg-vigil-paper p-4 text-center z-10 relative">
+                        <div class="font-mono text-xs font-bold text-vigil-ink-light mb-2">ORIGEN</div>
+                        <div class="font-space font-bold text-lg uppercase text-vigil-ink">Agente IA</div>
+                        <div class="text-xs font-mono text-vigil-ink-light mt-2 border-t border-vigil-lines pt-2">Cursor, Copilot, architect</div>
+                    </div>
+
+                    <!-- Flecha 1 -->
+                    <div class="hidden md:block w-1/6 relative">
+                        <svg class="w-full h-8" preserveAspectRatio="none" viewBox="0 0 100 10">
+                            <line x1="0" y1="5" x2="100" y2="5" stroke="#022C22" stroke-width="2" stroke-dasharray="4"/>
+                            <polygon points="95,0 100,5 95,10" fill="#022C22" />
+                        </svg>
+                    </div>
+
+                    <!-- Box 2: VIGIL CHECKPOINT -->
+                    <div class="w-full md:w-1/3 border-2 border-vigil-ink bg-vigil-ink text-white p-6 text-center z-10 shadow-brutal transform md:-translate-y-2 relative">
+                        <div class="absolute inset-0 hatch-pattern opacity-20 pointer-events-none"></div>
+                        <div class="relative z-10">
+                            <div class="font-mono text-xs text-vigil-accent font-bold mb-1">QUALITY GATE</div>
+                            <div class="font-space font-bold text-2xl uppercase flex items-center justify-center gap-2">
+                                <span class="text-vigil-accent">◇</span> VIGIL
+                            </div>
+                            <div class="text-xs font-mono mt-3 opacity-80">Análisis Estático + Registry Check</div>
+                        </div>
+                    </div>
+
+                    <!-- Flechas División -->
+                    <div class="hidden md:block w-1/6 relative h-32">
+                        <!-- Upper line (Success) -->
+                        <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                            <path d="M0,50 L50,50 L50,15 L100,15" fill="none" stroke="#022C22" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"/>
+                            <polygon points="95,10 100,15 95,20" fill="#022C22" />
+                            
+                            <!-- Lower line (Alert) -->
+                            <path d="M0,50 L50,50 L50,85 L100,85" fill="none" stroke="#EF4444" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"/>
+                            <polygon points="95,80 100,85 95,90" fill="#EF4444" />
+                        </svg>
+                    </div>
+
+                    <!-- Box 3: Output -->
+                    <div class="w-full md:w-1/4 flex flex-col gap-4 z-10">
+                        <!-- Success -->
+                        <div class="border-2 border-vigil-ink bg-vigil-surface p-3 flex items-center gap-3">
+                            <div class="bg-vigil-accent w-6 h-6 flex items-center justify-center border-2 border-vigil-ink font-bold text-vigil-ink text-xs">✔</div>
+                            <div>
+                                <div class="font-space font-bold text-sm uppercase">Merge a Main</div>
+                                <div class="font-mono text-[10px] text-vigil-ink-light">Código Seguro</div>
+                            </div>
+                        </div>
+                        <!-- Blocked -->
+                        <div class="border-2 border-vigil-alert bg-[#FEF2F2] p-3 flex items-center gap-3 shadow-brutal-alert">
+                            <div class="bg-vigil-alert text-white w-6 h-6 flex items-center justify-center border-2 border-vigil-alert font-bold text-xs">✗</div>
+                            <div>
+                                <div class="font-space font-bold text-sm uppercase text-vigil-alert">Bloqueado</div>
+                                <div class="font-mono text-[10px] text-vigil-alert">Alucinación Detectada</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             DIAGRAMA 2: MAPA DEL MERCADO (THE GAP)
+             Muestra dónde encaja Vigil vs Snyk/Semgrep
+        =========================================== -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-vigil-ink text-white font-mono text-xs px-2 py-1 font-bold">OPCIÓN 02</span>
+                <h2 class="font-space font-bold text-xl uppercase tracking-tight text-vigil-ink">Mapa de Mercado (El Gap de Seguridad)</h2>
+            </div>
+            <p class="font-inter text-vigil-ink-light mb-8 max-w-2xl">Perfecto para la sección de "Problema". Explica visualmente por qué Semgrep y Snyk no son suficientes por sí solos.</p>
+
+            <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal overflow-x-auto no-scrollbar">
+                <table class="w-full min-w-[700px] text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="p-4 border-b-2 border-vigil-ink font-mono text-xs uppercase text-vigil-ink-light w-1/3">Categoría de Análisis</th>
+                            <th class="p-4 border-b-2 border-vigil-ink font-space font-bold uppercase text-vigil-ink w-1/3 bg-vigil-paper border-x-2">Código Humano</th>
+                            <th class="p-4 border-b-2 border-vigil-ink font-space font-bold uppercase text-vigil-ink w-1/3">Código IA-Generated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-inter text-sm">
+                        <!-- Fila 1 -->
+                        <tr>
+                            <td class="p-4 border-b border-vigil-lines font-bold">
+                                Análisis de Dependencias (SCA)
+                                <div class="font-mono text-xs font-normal text-vigil-ink-light mt-1">Busca vulnerabilidades en librerías</div>
+                            </td>
+                            <td class="p-4 border-b border-vigil-lines border-x-2 border-x-vigil-ink bg-vigil-paper">
+                                Snyk, Trivy, Dependabot<br>
+                                <span class="font-mono text-xs text-vigil-ink-light">✓ Detectan CVEs conocidos</span>
+                            </td>
+                            <td class="p-4 border-b border-vigil-lines bg-[#ECFDF5] border-l-2 border-l-vigil-accent relative">
+                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-vigil-accent"></div>
+                                <span class="font-bold flex items-center gap-2">◇ Vigil <span class="font-mono text-xs font-normal">+ SCA Tools</span></span>
+                                <span class="font-mono text-xs text-vigil-ink-light block mt-1">✓ Existencia, Antigüedad, Typosquatting</span>
+                            </td>
+                        </tr>
+                        <!-- Fila 2 -->
+                        <tr>
+                            <td class="p-4 border-b border-vigil-lines font-bold">
+                                Código Estático (SAST)
+                                <div class="font-mono text-xs font-normal text-vigil-ink-light mt-1">Patrones de código inseguro</div>
+                            </td>
+                            <td class="p-4 border-b border-vigil-lines border-x-2 border-x-vigil-ink bg-vigil-paper">
+                                Semgrep, CodeQL, SonarQube<br>
+                                <span class="font-mono text-xs text-vigil-ink-light">✓ Patrones generales (SQLi, XSS)</span>
+                            </td>
+                            <td class="p-4 border-b border-vigil-lines bg-[#ECFDF5] border-l-2 border-l-vigil-accent relative">
+                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-vigil-accent"></div>
+                                <span class="font-bold flex items-center gap-2">◇ Vigil <span class="font-mono text-xs font-normal">+ SAST Tools</span></span>
+                                <span class="font-mono text-xs text-vigil-ink-light block mt-1">✓ Over-permission AI, Crypto Swaps</span>
+                            </td>
+                        </tr>
+                        <!-- Fila 3 -->
+                        <tr>
+                            <td class="p-4 font-bold">
+                                Calidad de Tests
+                                <div class="font-mono text-xs font-normal text-vigil-ink-light mt-1">Verificación de cobertura</div>
+                            </td>
+                            <td class="p-4 border-x-2 border-x-vigil-ink bg-vigil-paper">
+                                pytest-cov, Jest Coverage<br>
+                                <span class="font-mono text-xs text-vigil-ink-light">✓ Miden % de líneas ejecutadas</span>
+                            </td>
+                            <td class="p-4 bg-[#ECFDF5] border-l-2 border-l-vigil-accent relative">
+                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-vigil-accent"></div>
+                                <span class="font-bold flex items-center gap-2">◇ Vigil</span>
+                                <span class="font-mono text-xs text-vigil-ink-light block mt-1">✓ Detecta "Test Theater" y asserts vacíos</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             DIAGRAMA 3: EL ATAQUE DE SLOPSQUATTING
+             Muestra el vector de ataque y dónde corta Vigil
+        =========================================== -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-vigil-ink text-white font-mono text-xs px-2 py-1 font-bold">OPCIÓN 03</span>
+                <h2 class="font-space font-bold text-xl uppercase tracking-tight text-vigil-ink">Vector de Ataque (Slopsquatting)</h2>
+            </div>
+            <p class="font-inter text-vigil-ink-light mb-8 max-w-2xl">Un diagrama paso a paso de cómo funciona la alucinación de paquetes y cómo Vigil lo detiene en seco. Muy visual e impactante.</p>
+
+            <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal relative">
+                <!-- Línea conectora central -->
+                <div class="hidden md:block absolute top-[50%] left-12 right-12 h-0.5 bg-vigil-lines z-0"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+                    
+                    <!-- Step 1 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-4 flex flex-col items-center text-center relative group">
+                        <div class="w-8 h-8 rounded-full bg-vigil-paper border-2 border-vigil-ink font-mono font-bold flex items-center justify-center mb-4 text-xs absolute -top-4">1</div>
+                        <div class="font-mono text-[10px] text-vigil-ink-light uppercase mb-2 mt-4">Alucinación</div>
+                        <div class="font-space font-bold text-sm mb-2">IA Genera Código</div>
+                        <p class="font-mono text-xs text-vigil-ink-light bg-vigil-paper p-2 border border-vigil-lines w-full">
+                            import <span class="text-vigil-alert font-bold">fastapi-auth-utils</span>
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-4 flex flex-col items-center text-center relative hatch-pattern-alert">
+                        <div class="w-8 h-8 rounded-full bg-vigil-alert text-white border-2 border-vigil-alert font-mono font-bold flex items-center justify-center mb-4 text-xs absolute -top-4 shadow-brutal-alert">2</div>
+                        <div class="font-mono text-[10px] text-vigil-alert uppercase mb-2 mt-4 font-bold">El Ataque</div>
+                        <div class="font-space font-bold text-sm mb-2 bg-white px-1">Atacante Registra</div>
+                        <p class="font-inter text-xs bg-white p-2 border border-vigil-alert w-full">
+                            El atacante sube malware a PyPI con ese nombre falso repetible.
+                        </p>
+                    </div>
+
+                    <!-- Step 3: INTERCEPTADO POR VIGIL -->
+                    <div class="bg-vigil-ink text-white border-2 border-vigil-ink p-4 flex flex-col items-center text-center relative transform md:scale-110 shadow-brutal z-20">
+                        <div class="w-8 h-8 bg-vigil-accent text-vigil-ink border-2 border-vigil-ink font-mono font-bold flex items-center justify-center mb-4 text-xs absolute -top-4">◇</div>
+                        <div class="font-mono text-[10px] text-vigil-accent uppercase mb-2 mt-4 font-bold">Intercepción</div>
+                        <div class="font-space font-bold text-lg mb-2 text-vigil-accent">Vigil Scan</div>
+                        <p class="font-mono text-[10px] bg-[#000000] p-2 border border-vigil-ink-light w-full text-left">
+                            <span class="text-vigil-alert font-bold">[DEP-001] CRITICAL</span><br>
+                            Paquete no existe o es demasiado nuevo.<br>
+                            > ACCIÓN: Bloqueo.
+                        </p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-vigil-paper border-2 border-vigil-lines p-4 flex flex-col items-center text-center relative opacity-50">
+                        <div class="w-8 h-8 rounded-full bg-vigil-paper border-2 border-vigil-lines font-mono font-bold flex items-center justify-center mb-4 text-xs absolute -top-4">3</div>
+                        <div class="font-mono text-[10px] text-vigil-ink-light uppercase mb-2 mt-4">Evitado</div>
+                        <div class="font-space font-bold text-sm mb-2">Instalación Local</div>
+                        <p class="font-inter text-xs p-2 border border-vigil-lines w-full">
+                            El developer o CI/CD evita ejecutar `pip install` malicioso.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             DIAGRAMA 4: ARQUITECTURA TÉCNICA
+             Muestra el motor interno (Plano/Blueprint)
+        =========================================== -->
+        <section class="mb-24">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-vigil-ink text-white font-mono text-xs px-2 py-1 font-bold">OPCIÓN 04</span>
+                <h2 class="font-space font-bold text-xl uppercase tracking-tight text-vigil-ink">Arquitectura del Motor (El Blueprint)</h2>
+            </div>
+            <p class="font-inter text-vigil-ink-light mb-8 max-w-2xl">Muestra el interior del producto para un público técnico (DevSecOps), destacando los 4 analizadores de la V0 y las salidas.</p>
+
+            <div class="bg-vigil-paper border-2 border-vigil-ink p-8 shadow-brutal crop-mark crop-tl crop-tr crop-bl crop-br relative">
+                <!-- Fondo cuadriculado interno -->
+                <div class="absolute inset-0 grid-pattern opacity-50 pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col items-center max-w-3xl mx-auto">
+                    
+                    <!-- Entrada CLI -->
+                    <div class="border-2 border-vigil-ink bg-vigil-surface px-6 py-3 font-mono text-sm font-bold shadow-brutal mb-6">
+                        $ vigil scan src/
+                    </div>
+
+                    <!-- Flecha Down -->
+                    <div class="w-0.5 h-6 bg-vigil-ink mb-6"></div>
+
+                    <!-- Engine Wrapper -->
+                    <div class="w-full border-2 border-dashed border-vigil-ink bg-vigil-surface/90 p-6 relative">
+                        <div class="absolute -top-3 left-4 bg-vigil-ink text-white font-mono text-[10px] px-2 py-1">vigil.core.engine</div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                            <!-- Analyzer 1 -->
+                            <div class="border-2 border-vigil-ink bg-vigil-paper p-3 text-center tech-btn">
+                                <div class="font-mono text-[10px] text-vigil-ink-light mb-1 border-b border-vigil-lines pb-1">CAT-01</div>
+                                <div class="font-space font-bold text-sm leading-tight">Dependency<br>Analyzer</div>
+                            </div>
+                            <!-- Analyzer 2 -->
+                            <div class="border-2 border-vigil-ink bg-vigil-paper p-3 text-center tech-btn">
+                                <div class="font-mono text-[10px] text-vigil-ink-light mb-1 border-b border-vigil-lines pb-1">CAT-02</div>
+                                <div class="font-space font-bold text-sm leading-tight">Auth<br>Patterns</div>
+                            </div>
+                            <!-- Analyzer 3 -->
+                            <div class="border-2 border-vigil-ink bg-vigil-paper p-3 text-center tech-btn">
+                                <div class="font-mono text-[10px] text-vigil-ink-light mb-1 border-b border-vigil-lines pb-1">CAT-03</div>
+                                <div class="font-space font-bold text-sm leading-tight">Secrets &<br>Entropy</div>
+                            </div>
+                            <!-- Analyzer 4 -->
+                            <div class="border-2 border-vigil-ink bg-vigil-paper p-3 text-center tech-btn">
+                                <div class="font-mono text-[10px] text-vigil-ink-light mb-1 border-b border-vigil-lines pb-1">CAT-06</div>
+                                <div class="font-space font-bold text-sm leading-tight">Test<br>Quality</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flecha Down múltiple -->
+                    <div class="w-full h-8 flex justify-center mb-6 mt-6 relative">
+                        <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                            <!-- T invertida -->
+                            <path d="M50,0 L50,50 L20,50 L20,100" fill="none" stroke="#022C22" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"/>
+                            <path d="M50,50 L50,100" fill="none" stroke="#022C22" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"/>
+                            <path d="M50,50 L80,50 L80,100" fill="none" stroke="#022C22" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"/>
+                            <!-- Puntas de flecha -->
+                            <polygon points="15,90 20,100 25,90" fill="#022C22" />
+                            <polygon points="45,90 50,100 55,90" fill="#022C22" />
+                            <polygon points="75,90 80,100 85,90" fill="#022C22" />
+                        </svg>
+                    </div>
+
+                    <!-- Output Formatters -->
+                    <div class="w-full flex justify-between px-10 relative z-10">
+                        <div class="bg-vigil-ink text-white font-mono text-xs px-4 py-2 border-2 border-vigil-ink shadow-brutal">SARIF</div>
+                        <div class="bg-vigil-ink text-white font-mono text-xs px-4 py-2 border-2 border-vigil-ink shadow-brutal">JUnit XML</div>
+                        <div class="bg-vigil-ink text-white font-mono text-xs px-4 py-2 border-2 border-vigil-ink shadow-brutal">JSON / Human</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

@@ -1,252 +1,361 @@
 ---
-title: "Configuración"
-description: "Referencia completa de .vigil.yaml y flags de CLI."
-order: 3
+title: "Configuracion"
+description: "Archivo .vigil.yaml, estrategias, overrides y merge de configuracion."
+order: 4
 icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
 ---
 
-# Configuración
+# Configuracion
 
-Vigil se configura mediante un archivo `.vigil.yaml` en la raíz de tu proyecto, flags de línea de comandos o variables de entorno. Los flags de CLI siempre tienen prioridad sobre el archivo de configuración, y las variables de entorno tienen prioridad sobre ambos.
+vigil se configura mediante un archivo YAML, flags de CLI, o una combinacion de ambos. La configuracion sigue un modelo de tres capas con merge progresivo.
 
-## Inicialización
+## Orden de precedencia
 
-Genera un archivo de configuración con los valores por defecto:
+```
+Defaults (codigo) < Archivo YAML (.vigil.yaml) < Flags del CLI
+```
+
+Los flags del CLI siempre tienen la prioridad mas alta. Esto permite tener un archivo de configuracion base para el equipo y hacer ajustes puntuales por ejecucion.
+
+## Archivo de configuracion
+
+### Creacion
 
 ```bash
+# Generar con defaults
 vigil init
-# ✓ Creado .vigil.yaml
+
+# Generar con estrategia estricta
+vigil init --strategy strict
+
+# Generar en un directorio especifico
+vigil init /ruta/al/proyecto
 ```
 
-## Archivo de Configuración Completo
+### Nombres soportados
+
+vigil busca automaticamente estos archivos, en este orden:
+
+1. `.vigil.yaml`
+2. `.vigil.yml`
+3. `vigil.yaml`
+4. `vigil.yml`
+
+La busqueda comienza en el directorio actual y sube por el arbol de directorios hasta la raiz. Esto permite tener un archivo de configuracion en la raiz del monorepo que aplique a todos los subproyectos.
+
+### Especificar ruta explicita
+
+```bash
+vigil scan src/ --config /ruta/a/mi-config.yaml
+```
+
+---
+
+## Referencia completa
+
+### Configuracion general
 
 ```yaml
-# .vigil.yaml — Configuración completa de Vigil
-version: "1"
+# Directorios a incluir en el scan
+include:
+  - "src/"
+  - "lib/"
+  - "app/"
 
-# Opciones de escaneo
-scan:
-  # Directorios a escanear
-  paths:
-    - src/
-    - lib/
-    - app/
+# Directorios y patrones a excluir
+exclude:
+  - "node_modules/"
+  - ".venv/"
+  - "__pycache__/"
+  - ".git/"
+  - "dist/"
+  - "build/"
+  - ".tox/"
+  - ".mypy_cache/"
 
-  # Patrones de exclusión (glob)
-  exclude:
-    - "**/__pycache__/**"
-    - "**/node_modules/**"
-    - "**/.venv/**"
-    - "**/dist/**"
-    - "**/build/**"
-    - "**/*.min.js"
+# Directorios de tests (usados por el subcomando `vigil tests`)
+test_dirs:
+  - "tests/"
+  - "test/"
+  - "__tests__/"
 
-  # Extensiones de archivo a analizar
-  extensions:
-    - .py
-    - .js
-    - .ts
-    - .jsx
-    - .tsx
+# Severidad minima para fallar con exit code 1
+# Opciones: critical, high, medium, low
+fail_on: "high"
 
-# Configuración de reglas individuales
+# Lenguajes a escanear
+# Opciones: python, javascript
+languages:
+  - python
+  - javascript
+```
+
+### Dependencias (`deps`)
+
+Configuracion del analyzer de dependencias (CAT-01).
+
+```yaml
+deps:
+  # Verificar existencia de paquetes en PyPI/npm via HTTP
+  verify_registry: true
+
+  # Minimo de dias de antiguedad para considerar un paquete seguro
+  # Paquetes mas nuevos que esto generan DEP-002
+  min_age_days: 30
+
+  # Minimo de descargas semanales para considerar un paquete seguro
+  # Paquetes con menos descargas generan DEP-004
+  min_weekly_downloads: 100
+
+  # Umbral de similitud para deteccion de typosquatting (0.0 a 1.0)
+  # Valores mas altos = menos falsos positivos, mas falsos negativos
+  # 0.85 es un buen balance
+  similarity_threshold: 0.85
+
+  # Tiempo de vida del cache de respuestas del registry (en horas)
+  # Evita hacer la misma request HTTP dos veces en 24 horas
+  cache_ttl_hours: 24
+
+  # Modo offline: no hacer ninguna request HTTP
+  # Solo ejecuta checks estaticos (similaridad, imports sin declarar)
+  offline_mode: false
+
+  # Ruta a un archivo personalizado de paquetes populares (JSON)
+  # Por defecto usa el corpus bundled en data/
+  # popular_packages_file: "/ruta/a/mis-paquetes.json"
+```
+
+### Autenticacion (`auth`)
+
+Configuracion del analyzer de patrones de autenticacion (CAT-02).
+
+```yaml
+auth:
+  # Maximo de horas de lifetime para un JWT
+  # Tokens con lifetime mayor generan AUTH-003
+  max_token_lifetime_hours: 24
+
+  # Requerir autenticacion en endpoints mutantes (PUT, DELETE, PATCH)
+  # Si es true, endpoints mutantes sin auth middleware generan AUTH-002
+  require_auth_on_mutating: true
+
+  # Permitir CORS con localhost en modo desarrollo
+  # Si es true, `cors(origin: 'http://localhost:*')` no genera AUTH-005
+  cors_allow_localhost: true
+```
+
+### Secrets (`secrets`)
+
+Configuracion del analyzer de secrets y credenciales (CAT-03).
+
+```yaml
+secrets:
+  # Entropia minima de Shannon (bits/caracter) para considerar un string como secret
+  # Valores tipicos: < 3.0 = placeholder, > 4.5 = secret real
+  min_entropy: 3.0
+
+  # Comparar valores en codigo con los de .env.example
+  # Si un valor en codigo coincide con uno de .env.example, genera SEC-006
+  check_env_example: true
+
+  # Patrones regex de placeholders conocidos
+  # Si un valor asignado a una variable sensible coincide con estos patrones, genera SEC-001
+  placeholder_patterns:
+    - "changeme"
+    - "your-.*-here"
+    - "TODO"
+    - "FIXME"
+    - "xxx+"
+    - "sk-your.*"
+    - "pk_test_.*"
+    - "secret123"
+    - "password123"
+    - "supersecret"
+    - "example\\.com"
+    - "localhost"
+```
+
+### Test quality (`tests`)
+
+Configuracion del analyzer de calidad de tests (CAT-06).
+
+```yaml
+tests:
+  # Minimo de assertions requeridas por funcion de test
+  # Tests con menos assertions generan TEST-001
+  min_assertions_per_test: 1
+
+  # Detectar assertions triviales (assert True, assert x is not None)
+  detect_trivial_asserts: true
+
+  # Detectar mocks que replican exactamente la implementacion
+  detect_mock_mirrors: true
+```
+
+### Output
+
+```yaml
+output:
+  # Formato de salida: human, json, junit, sarif
+  format: "human"
+
+  # Archivo de salida (null = stdout)
+  output_file: null
+
+  # Usar colores ANSI en la terminal
+  colors: true
+
+  # Output detallado
+  verbose: false
+
+  # Mostrar sugerencias de correccion
+  show_suggestions: true
+```
+
+---
+
+## Rule overrides
+
+Puedes deshabilitar reglas individuales o cambiar su severidad.
+
+```yaml
 rules:
-  # Dependencias
-  DEP-001:
-    enabled: true
-    severity: critical
-    options:
-      registries:
-        - pypi
-        - npm
-        - crates.io
-      cache_ttl: 3600          # Cache de verificación (segundos)
+  # Deshabilitar una regla completamente
+  AUTH-003:
+    enabled: false
 
-  DEP-002:
-    enabled: true
-    severity: warning
-    options:
-      max_age_days: 30         # Días mínimos de antigüedad
+  # Cambiar la severidad de una regla
+  DEP-004:
+    severity: "low"
 
-  # Seguridad
-  SEC-001:
-    enabled: true
-    severity: critical
-    options:
-      sensitive_paths:         # Patrones de rutas sensibles
-        - "/admin/*"
-        - "/api/users/*"
-        - "/api/payments/*"
-
-  SEC-002:
-    enabled: true
-    severity: warning
-
-  SEC-003:
-    enabled: true
-    severity: critical
-    options:
-      entropy_threshold: 3.5   # Umbral mínimo de entropía
-      patterns:                # Patrones de placeholder adicionales
-        - "your-.*-here"
-        - "TODO"
-        - "CHANGEME"
-        - "example"
-
-  # Tests
-  TEST-001:
-    enabled: true
-    severity: warning
-    options:
-      min_asserts: 1           # Mínimo de asserts por test
-
+  # Combinar: habilitar con severidad diferente
   TEST-002:
-    enabled: false             # Deshabilitada por defecto
-    severity: info
-
-# Opciones de salida
-output:
-  format: human                # human | json | sarif
-  colors: true                 # Colorear salida en terminal
-  verbose: false               # Mostrar archivos escaneados
-  quiet: false                 # Solo mostrar errores
+    enabled: true
+    severity: "high"
 ```
 
-## Flags de CLI
+### Overrides comunes
 
-### Comando `scan`
+```yaml
+rules:
+  # Si tu proyecto usa tokens de larga duracion intencionalmente
+  AUTH-003:
+    enabled: false
 
-```bash
-vigil scan [PATH...] [OPTIONS]
+  # Si tienes dependencias internas con pocas descargas
+  DEP-004:
+    severity: "low"
+
+  # Si permites CORS abierto en desarrollo
+  AUTH-005:
+    severity: "medium"
+
+  # Si tus tests usan un framework custom sin assertions estandar
+  TEST-001:
+    enabled: false
 ```
 
-| Flag | Tipo | Default | Descripción |
-|------|------|---------|-------------|
-| `--format` | `string` | `human` | Formato de salida: `human`, `json`, `sarif` |
-| `--output` | `path` | `stdout` | Ruta del archivo de salida |
-| `--changed-only` | `flag` | `false` | Solo escanear archivos con cambios en Git |
-| `--severity` | `string` | `info` | Severidad mínima: `info`, `warning`, `critical` |
-| `--config` | `path` | `.vigil.yaml` | Ruta al archivo de configuración |
-| `--no-colors` | `flag` | `false` | Deshabilitar colores en la salida |
-| `--verbose` | `flag` | `false` | Mostrar cada archivo escaneado |
-| `--quiet` | `flag` | `false` | Solo mostrar hallazgos críticos |
-| `--ignore` | `string[]` | `[]` | Reglas a ignorar (ej. `--ignore DEP-002`) |
-| `--fail-on` | `string` | `critical` | Severidad mínima para exit code 1 |
+---
 
-### Comando `rules`
+## Estrategias predefinidas
 
-```bash
-vigil rules [OPTIONS]
+### `strict`
+
+Para entornos con requisitos de compliance altos (SOC 2, ISO 27001, EU CRA).
+
+```yaml
+fail_on: "medium"
+deps:
+  min_age_days: 60
+  min_weekly_downloads: 500
+auth:
+  max_token_lifetime_hours: 1
 ```
 
-| Flag | Descripción |
-|------|-------------|
-| `--format json` | Listar reglas en formato JSON |
-| `--enabled-only` | Solo mostrar reglas habilitadas |
+### `standard` (default)
 
-### Comando `init`
+Para la mayoria de proyectos. Balance entre seguridad y practicidad.
 
-```bash
-vigil init [OPTIONS]
+```yaml
+fail_on: "high"
+deps:
+  min_age_days: 30
+  min_weekly_downloads: 100
+auth:
+  max_token_lifetime_hours: 24
 ```
 
-| Flag | Descripción |
-|------|-------------|
-| `--force` | Sobrescribir archivo existente |
-| `--minimal` | Generar configuración mínima |
+### `relaxed`
 
-## Variables de Entorno
+Para prototipos, pruebas de concepto, o proyectos en fase temprana.
 
-Todas las opciones pueden configurarse mediante variables de entorno con el prefijo `VIGIL_`:
+```yaml
+fail_on: "critical"
+deps:
+  min_age_days: 7
+  min_weekly_downloads: 10
+auth:
+  max_token_lifetime_hours: 72
+```
 
-| Variable | Equivale a |
-|----------|------------|
-| `VIGIL_FORMAT` | `--format` |
-| `VIGIL_SEVERITY` | `--severity` |
-| `VIGIL_CONFIG` | `--config` |
-| `VIGIL_NO_COLORS` | `--no-colors` |
-| `VIGIL_QUIET` | `--quiet` |
+---
 
-Ejemplo:
+## Configuracion por entorno
+
+Una practica comun es tener multiples archivos de configuracion:
+
+```
+proyecto/
+  .vigil.yaml            # Config base del equipo (commiteada)
+  .vigil.strict.yaml     # Config para produccion
+  .vigil.dev.yaml        # Config para desarrollo local
+```
 
 ```bash
-export VIGIL_FORMAT=json
-export VIGIL_SEVERITY=warning
+# Desarrollo local
 vigil scan src/
-# Equivale a: vigil scan src/ --format json --severity warning
+
+# Pipeline de CI para produccion
+vigil scan src/ --config .vigil.strict.yaml
 ```
 
-## Ejemplos de Uso
+---
 
-### Proyecto Python con FastAPI
+## Variables de entorno
 
-```yaml
-# .vigil.yaml
-version: "1"
-scan:
-  paths: [app/, tests/]
-  exclude: ["**/__pycache__/**"]
-rules:
-  SEC-001:
-    enabled: true
-    options:
-      sensitive_paths: ["/api/admin/*", "/api/billing/*"]
-  SEC-002:
-    enabled: true
-  DEP-001:
-    enabled: true
-    options:
-      registries: [pypi]
-```
+vigil no lee variables de entorno directamente para su configuracion. Toda la configuracion se hace via YAML o CLI flags. Esto es intencional para mantener la herramienta determinista y evitar comportamientos inesperados.
 
-### Monorepo con Node.js y Python
-
-```yaml
-version: "1"
-scan:
-  paths:
-    - services/api/src/
-    - services/frontend/src/
-    - packages/
-  exclude:
-    - "**/node_modules/**"
-    - "**/__pycache__/**"
-    - "**/dist/**"
-rules:
-  DEP-001:
-    options:
-      registries: [pypi, npm]
-```
-
-### CI/CD: Solo errores críticos
-
-```yaml
-version: "1"
-output:
-  format: sarif
-  quiet: true
-rules:
-  DEP-002: { enabled: false }
-  TEST-002: { enabled: false }
-  SEC-002: { severity: info }
-```
-
-## Orden de Precedencia
-
-La configuración se resuelve con el siguiente orden de prioridad (de mayor a menor):
-
-1. Flags de CLI (`--format json`)
-2. Variables de entorno (`VIGIL_FORMAT=json`)
-3. Archivo de configuración (`.vigil.yaml`)
-4. Valores por defecto internos
-
-## Validación
-
-Vigil valida el archivo de configuración al inicio de cada scan. Si hay errores de formato o valores inválidos, se muestra un error descriptivo:
+Si necesitas configuracion dinamica, puedes generar el archivo YAML como parte de tu pipeline:
 
 ```bash
-$ vigil scan src/
-✗ Error en .vigil.yaml:
-  › Línea 15: El valor 'extreme' no es válido para severity.
-  › Valores aceptados: info, warning, critical
+# Ejemplo: generar config dinamicamente segun el entorno
+if [ "$CI" = "true" ]; then
+    vigil scan src/ --config .vigil.strict.yaml --fail-on medium
+else
+    vigil scan src/ --fail-on high
+fi
 ```
+
+---
+
+## Cache
+
+vigil almacena cache de las respuestas de registries (PyPI/npm) en:
+
+```
+~/.cache/vigil/registry/
+```
+
+- El TTL por defecto es 24 horas (configurable con `deps.cache_ttl_hours`).
+- Cada paquete se cachea individualmente como un archivo JSON.
+- El cache se comparte entre ejecuciones para evitar requests repetidas.
+
+### Limpiar el cache
+
+```bash
+rm -rf ~/.cache/vigil/registry/
+```
+
+### Deshabilitar el cache
+
+No hay una opcion explicita para deshabilitarlo. Puedes usar `cache_ttl_hours: 0` para forzar requests frescas en cada ejecucion, o `--offline` para no hacer requests en absoluto.
