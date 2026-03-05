@@ -1,0 +1,80 @@
+---
+interface Props {
+  title: string;
+  code: string;
+  dark?: boolean;
+}
+
+const { title, code, dark = false } = Astro.props;
+---
+
+<div class:list={['codeblock', { 'codeblock--dark': dark }]}>
+  <div class="codeblock-header">
+    <span class="codeblock-title">{title}</span>
+    <div class="codeblock-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot dot--accent"></span>
+    </div>
+  </div>
+  <pre class="codeblock-body"><code>{code}</code></pre>
+</div>
+
+<style>
+  .codeblock {
+    border: var(--border-width) solid var(--color-ink);
+    background: var(--color-surface);
+  }
+  .codeblock--dark {
+    background: var(--color-ink);
+    color: var(--color-surface);
+  }
+  .codeblock-header {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: var(--border-width) solid var(--color-ink);
+  }
+  .codeblock--dark .codeblock-header {
+    border-bottom-color: var(--color-surface);
+  }
+  .codeblock-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .codeblock-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    background: var(--color-ink);
+  }
+  .codeblock--dark .dot {
+    background: var(--color-surface);
+  }
+  .dot--accent {
+    background: var(--color-accent) !important;
+  }
+  .codeblock-body {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    padding: 1rem;
+    margin: 0;
+    overflow-x: auto;
+    background: var(--color-paper);
+    border: var(--border-width) solid var(--color-ink);
+    margin: 0.75rem;
+  }
+  .codeblock--dark .codeblock-body {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: var(--color-surface);
+    color: var(--color-paper);
+  }
+</style>

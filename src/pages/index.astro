@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import HeroSection from '../components/sections/HeroSection.astro';
+import ProblemSection from '../components/sections/ProblemSection.astro';
+import FeaturesSection from '../components/sections/FeaturesSection.astro';
+import IntegrationSection from '../components/sections/IntegrationSection.astro';
+import CTASection from '../components/sections/CTASection.astro';
+
+const lang = 'es';
+---
+
+<Layout lang={lang}>
+  <Navbar lang={lang} />
+  <main>
+    <HeroSection lang={lang} />
+    <ProblemSection lang={lang} />
+    <FeaturesSection lang={lang} />
+    <IntegrationSection lang={lang} />
+    <CTASection lang={lang} />
+  </main>
+  <Footer lang={lang} />
+</Layout>

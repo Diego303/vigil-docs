@@ -1,0 +1,76 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { t } from '../../i18n/utils';
+import StatCard from '../ui/StatCard.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const stats = t('problem.stats', lang) as Array<{ stat: string; title: string; description: string }>;
+---
+
+<section id="problema" class="problem-section">
+  <div class="problem-inner">
+    <div class="problem-header">
+      <h2 class="problem-title">{t('problem.title', lang)}</h2>
+      <p class="problem-subtitle">{t('problem.subtitle', lang)}</p>
+    </div>
+
+    <div class="stats-grid">
+      {stats.map(s => (
+        <StatCard stat={s.stat} title={s.title} description={s.description} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .problem-section {
+    background: var(--color-ink);
+    color: var(--color-surface);
+    padding: 5rem 0;
+    border-top: var(--border-width) solid var(--color-ink);
+    border-bottom: var(--border-width) solid var(--color-ink);
+  }
+  .problem-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .problem-header {
+    border-bottom: var(--border-width) solid var(--color-surface);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .problem-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-surface);
+  }
+  .problem-subtitle {
+    font-family: var(--font-mono);
+    margin-top: 1rem;
+    color: var(--color-paper);
+    opacity: 0.8;
+    max-width: 48rem;
+    line-height: 1.5;
+    font-size: 0.9375rem;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .problem-title { font-size: 3rem; }
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t, getLocalizedPath } from '../i18n/utils';
+import LangToggle from './LangToggle.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href={getLocalizedPath('/', lang)} class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="12,2 22,12 12,22 2,12" />
+      </svg>
+      <span class="logo-text">sentinel</span>
+    </a>
+
+    <div class="nav-links">
+      <a href={getLocalizedPath('/docs/', lang)}>{t('nav.docs', lang)}</a>
+    </div>
+
+    <div class="nav-right">
+      <LangToggle lang={lang} />
+    </div>
+
+    <button class="hamburger" aria-label="Menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" hidden>
+    <a href={getLocalizedPath('/docs/', lang)}>{t('nav.docs', lang)}</a>
+    <LangToggle lang={lang} />
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const btn = document.querySelector('.hamburger');
+    const menu = document.querySelector('.mobile-menu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      (menu as HTMLElement).hidden = expanded;
+    });
+  });
+</script>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    background: var(--color-surface);
+    border-bottom: var(--border-width) solid var(--color-ink);
+  }
+  .navbar-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .logo-text {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: none;
+    gap: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .nav-links a {
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover {
+    color: var(--color-accent);
+  }
+  .nav-right {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  .hamburger-line {
+    width: 24px;
+    height: 2px;
+    background: var(--color-ink);
+  }
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--color-lines);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  .mobile-menu a {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .mobile-menu a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 768px) {
+    .nav-links { display: flex; }
+    .nav-right { display: flex; }
+    .hamburger { display: none; }
+    .mobile-menu { display: none !important; }
+  }
+</style>
