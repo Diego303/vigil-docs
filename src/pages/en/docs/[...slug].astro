@@ -43,18 +43,28 @@ const versionLabel = versionId.replace(/-/g, '.').replace('v', 'v');
 <style>
   .docs-layout {
     display: flex;
+    flex-direction: column;
     max-width: var(--max-width);
     margin: 0 auto;
     min-height: calc(100vh - 73px);
   }
   .docs-content {
     flex: 1;
-    padding: 2rem 1.5rem 4rem;
-    overflow-x: hidden;
+    padding: 2rem 1rem 4rem;
     min-width: 0;
+    overflow-x: auto;
+  }
+
+  @media (min-width: 640px) {
+    .docs-content {
+      padding: 2rem 1.5rem 4rem;
+    }
   }
 
   @media (min-width: 1024px) {
+    .docs-layout {
+      flex-direction: row;
+    }
     .docs-content {
       padding: 2rem 3rem 4rem;
     }

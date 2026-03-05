@@ -1,10 +1,10 @@
-Sistema de Diseño: "Sentinel"
+Sistema de Diseño: "Vigil"
 
 Guía de Estilos y Arquitectura Visual para Web y Documentación
 
 1. Concepto Core y Filosofía Visual
 
-La estética de Sentinel se define como Brutalismo de Auditoría (Audit Brutalism).
+La estética de Vigil se define como Brutalismo de Auditoría (Audit Brutalism).
 
 No es un IDE oscuro (Intake) ni un manual de arquitectura cálido (Architect). Representa un informe de inspección técnica, un documento de conformidad y una auditoría de seguridad implacable.
 
@@ -78,11 +78,11 @@ Familia: JetBrains Mono (monospace)
 
 Pesos: Regular (400), Medium (500), Bold (700).
 
-Uso: Fragmentos de código, comandos CLI (sentinel scan), identificadores de reglas (ej. [DEP-001]), etiquetas de estado y navegación secundaria.
+Uso: Fragmentos de código, comandos CLI (vigil scan), identificadores de reglas (ej. [DEP-001]), etiquetas de estado y navegación secundaria.
 
 4. Lenguaje Visual y Texturas (VFX)
 
-Sentinel utiliza texturas para estructurar la información sin recurrir a contenedores pesados.
+Vigil utiliza texturas para estructurar la información sin recurrir a contenedores pesados.
 
 4.1 La Cuadrícula de Auditoría (Grid Pattern)
 
@@ -98,7 +98,7 @@ Uso: Se utiliza para indicar áreas de "procesamiento", fondos de terminales emu
 
 4.3 Marcas de Corte (Crop Marks)
 
-El elemento visual más distintivo de Sentinel. En lugar de cajas cerradas, las secciones críticas (como el Hero o bloques de advertencia) se enmarcan con esquinas abiertas simulando marcas de registro de imprenta.
+El elemento visual más distintivo de Vigil. En lugar de cajas cerradas, las secciones críticas (como el Hero o bloques de advertencia) se enmarcan con esquinas abiertas simulando marcas de registro de imprenta.
 
 Construcción: Ángulos de 12x12px con bordes de 2px de grosor (#022C22) posicionados en las esquinas (top: -6px, left: -6px, etc.).
 
@@ -148,7 +148,7 @@ Etiqueta (Badge): Un bloque sólido en la esquina superior derecha con fondo Ink
 
 6. Recomendaciones para el Sitio de Documentación (Astro/Starlight)
 
-Si vas a montar la documentación oficial de Sentinel:
+Si vas a montar la documentación oficial de Vigil:
 
 Reemplazo de Defaults: Si usas un framework de docs (como Starlight o Docusaurus), sobrescribe inmediatamente las variables de border-radius a 0. Elimina los degradados y sombras suaves por defecto.
 

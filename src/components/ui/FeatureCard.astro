@@ -26,7 +26,8 @@ const { badge, title, description, items } = Astro.props;
   .feature-card {
     background: var(--color-surface);
     border: var(--border-width) solid var(--color-ink);
-    padding: 2rem;
+    padding: 1.25rem;
+    padding-top: 2.5rem;
     box-shadow: var(--shadow-brutal);
     position: relative;
   }
@@ -70,5 +71,12 @@ const { badge, title, description, items } = Astro.props;
   .check {
     color: var(--color-accent);
     font-weight: 700;
+  }
+
+  @media (min-width: 640px) {
+    .feature-card {
+      padding: 2rem;
+      padding-top: 2.5rem;
+    }
   }
 </style>

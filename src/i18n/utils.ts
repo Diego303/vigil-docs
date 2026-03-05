@@ -1,6 +1,6 @@
 import { ui, defaultLang, type Lang } from './ui';
 
-const BASE = '/sentinel-docs';
+const BASE = '/vigil-docs';
 
 /**
  * Deep-access a nested translation key like "nav.docs".

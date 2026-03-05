@@ -53,12 +53,12 @@ const stats = t('problem.stats', lang) as Array<{ stat: string; title: string; d
     color: var(--color-surface);
   }
   .problem-subtitle {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     margin-top: 1rem;
     color: var(--color-paper);
     opacity: 0.8;
     max-width: 48rem;
-    line-height: 1.5;
+    line-height: 1.6;
     font-size: 0.9375rem;
   }
   .stats-grid {
@@ -69,6 +69,10 @@ const stats = t('problem.stats', lang) as Array<{ stat: string; title: string; d
 
   @media (min-width: 768px) {
     .problem-title { font-size: 3rem; }
+    .problem-subtitle {
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
     .stats-grid {
       grid-template-columns: repeat(3, 1fr);
     }

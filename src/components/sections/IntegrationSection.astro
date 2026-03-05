@@ -10,14 +10,14 @@ interface Props {
 const { lang } = Astro.props;
 
 const precommitCode = `repos:
-  - repo: https://github.com/Diego303/sentinel-cli
+  - repo: https://github.com/Diego303/vigil-cli
     rev: v1.0.0
     hooks:
-      - id: sentinel
+      - id: vigil
         args: [scan, --changed-only]`;
 
 const cicdCode = `- name: Scan AI Code
-  run: sentinel scan src/ \\
+  run: vigil scan src/ \\
        --format sarif \\
        --output report.sarif
 - uses: github/codeql-action/upload-sarif
@@ -27,8 +27,8 @@ const cicdCode = `- name: Scan AI Code
 const architectCode = `# En tu .architect.yaml
 guardrails:
   quality_gates:
-    - name: sentinel
-      command: "sentinel scan src/"
+    - name: vigil
+      command: "vigil scan src/"
       required: true`;
 ---
 
@@ -83,7 +83,7 @@ guardrails:
     gap: 2rem;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .integration-grid {
       grid-template-columns: repeat(3, 1fr);
     }

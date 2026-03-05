@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vigil ◇ | Security Scanner para Código de IA</title>
+    
+    <!-- Fuentes Google: Space Grotesk (Titulares), Inter (Cuerpo), JetBrains Mono (Código) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración Tailwind personalizada para el Sistema de Diseño Vigil -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vigil: {
+                            paper: '#F4F7F5', // Fondo principal, un gris/verde muy sutil
+                            surface: '#FFFFFF', // Superficies elevadas
+                            ink: '#022C22', // Texto principal y bordes (Emerald 950)
+                            'ink-light': '#064E3B', // Texto secundario (Emerald 900)
+                            accent: '#10B981', // Verde técnico brillante
+                            alert: '#EF4444', // Rojo para vulnerabilidades
+                        }
+                    },
+                    fontFamily: {
+                        space: ['"Space Grotesk"', 'sans-serif'],
+                        inter: ['"Inter"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    boxShadow: {
+                        'brutal': '4px 4px 0px 0px #022C22',
+                        'brutal-hover': '2px 2px 0px 0px #022C22',
+                        'brutal-white': '4px 4px 0px 0px #FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Personalizado para texturas y efectos brutlistas */
+        body {
+            background-color: theme('colors.vigil.paper');
+            color: theme('colors.vigil.ink');
+        }
+
+        /* Cuadrícula Técnica de Auditoría */
+        .grid-pattern {
+            background-image: 
+                linear-gradient(to right, #E2E8E4 1px, transparent 1px),
+                linear-gradient(to bottom, #E2E8E4 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Sombreado de Trama (Hatch Pattern) */
+        .hatch-pattern {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 4px,
+                #E2E8E4 4px,
+                #E2E8E4 5px
+            );
+        }
+
+        /* Marcas de corte (Crop marks) */
+        .crop-mark {
+            position: relative;
+        }
+        .crop-mark::before, .crop-mark::after {
+            content: '';
+            position: absolute;
+            border-color: theme('colors.vigil.ink');
+            border-style: solid;
+        }
+        .crop-tl::before { top: -6px; left: -6px; width: 12px; height: 12px; border-width: 2px 0 0 2px; }
+        .crop-tr::after { top: -6px; right: -6px; width: 12px; height: 12px; border-width: 2px 2px 0 0; }
+        .crop-bl::before { bottom: -6px; left: -6px; width: 12px; height: 12px; border-width: 0 0 2px 2px; }
+        .crop-br::after { bottom: -6px; right: -6px; width: 12px; height: 12px; border-width: 0 2px 2px 0; }
+
+        /* Botón Técnico */
+        .tech-btn {
+            transition: all 0.1s ease;
+        }
+        .tech-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px theme('colors.vigil.ink');
+        }
+        .tech-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px theme('colors.vigil.ink');
+        }
+
+        /* Ocultar scrollbar en código */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-inter antialiased grid-pattern min-h-screen flex flex-col selection:bg-vigil-accent selection:text-white">
+
+    <!-- NAV -->
+    <nav class="w-full border-b-2 border-vigil-ink bg-vigil-surface sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <!-- Icono Rombo Hueco -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-vigil-ink">
+                    <polygon points="12,2 22,12 12,22 2,12" />
+                </svg>
+                <span class="font-space font-bold text-xl tracking-tight uppercase">vigil</span>
+            </div>
+            <div class="hidden md:flex gap-8 font-mono text-sm font-medium">
+                <a href="#problema" class="hover:text-vigil-accent transition-colors">/problema</a>
+                <a href="#features" class="hover:text-vigil-accent transition-colors">/características</a>
+                <a href="#docs" class="hover:text-vigil-accent transition-colors">/documentación</a>
+            </div>
+            <div>
+                <a href="https://github.com/vigil/vigil" target="_blank" class="font-mono text-xs px-4 py-2 border-2 border-vigil-ink hover:bg-vigil-paper transition-colors font-bold">
+                    <span class="mr-2">◇</span>GITHUB
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+        
+        <!-- SECTION 1: HERO (The Hook) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 flex flex-col lg:flex-row items-center gap-12">
+            <div class="w-full lg:w-1/2 flex flex-col gap-6 relative crop-mark crop-tl crop-bl pl-6">
+                <!-- Línea decorativa izquierda -->
+                <div class="absolute left-0 top-0 w-1 h-full bg-vigil-accent"></div>
+                
+                <div class="inline-block bg-vigil-ink text-white font-mono text-xs px-3 py-1 self-start uppercase tracking-widest font-bold">
+                    Status: Pre-Release v1.0
+                </div>
+                
+                <h1 class="font-space font-bold text-5xl lg:text-7xl leading-tight text-vigil-ink">
+                    Tu IA escribe código <span class="text-vigil-accent bg-vigil-ink px-2">rápido.</span><br>
+                    También vulnerabilidades.
+                </h1>
+                
+                <p class="font-inter text-lg lg:text-xl text-vigil-ink-light max-w-xl">
+                    Vigil es el primer security scanner determinista diseñado para código generado por agentes de Inteligencia Artificial. Detecta slopsquatting, alucinaciones y falsos tests en segundos.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                    <!-- Copy to clipboard block -->
+                    <div class="flex items-center border-2 border-vigil-ink bg-vigil-surface shadow-brutal w-full sm:w-auto">
+                        <span class="font-mono text-sm px-4 py-3 text-vigil-ink-light bg-vigil-paper border-r-2 border-vigil-ink">$</span>
+                        <code class="font-mono text-sm px-4 py-3 w-full" id="install-cmd">pip install vigil-ai</code>
+                        <button onclick="copyCmd()" class="p-3 border-l-2 border-vigil-ink hover:bg-vigil-accent hover:text-white transition-colors group" title="Copiar al portapapeles">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="group-hover:scale-110 transition-transform">
+                                <rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="#demo" class="tech-btn bg-vigil-ink text-white font-space font-bold uppercase tracking-widest text-sm px-8 py-3 border-2 border-vigil-ink shadow-brutal flex items-center justify-center">
+                        Ver Demo
+                    </a>
+                </div>
+                <div class="font-mono text-xs text-vigil-ink-light mt-2">
+                    <span class="text-vigil-accent">✔</span> Sin telemetría. Sin costes de API. Open Source.
+                </div>
+            </div>
+
+            <!-- Hero Graphic (Terminal Style) -->
+            <div class="w-full lg:w-1/2 crop-mark crop-tr crop-br hatch-pattern p-6 border-2 border-vigil-ink relative shadow-brutal bg-vigil-surface">
+                <!-- Mac-like header but brutalist -->
+                <div class="border-b-2 border-vigil-ink pb-3 mb-4 flex justify-between items-center">
+                    <div class="font-mono text-xs font-bold uppercase tracking-widest text-vigil-ink">
+                        Terminal — vigil scan
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 bg-vigil-ink"></div>
+                        <div class="w-3 h-3 bg-vigil-ink"></div>
+                        <div class="w-3 h-3 bg-vigil-accent"></div>
+                    </div>
+                </div>
+                <div class="font-mono text-sm leading-relaxed overflow-x-auto no-scrollbar">
+                    <p class="text-vigil-ink-light"><span class="text-vigil-accent">user@host:~$</span> vigil scan src/ --format human</p>
+                    <p class="text-vigil-ink mt-2">◇ Vigil V1.0 - Analizando 42 archivos...</p>
+                    <p class="text-vigil-ink">==================================================</p>
+                    <p class="text-vigil-alert font-bold mt-2">[CRÍTICO] DEP-001: Dependency Hallucination</p>
+                    <p class="text-vigil-ink-light ml-4">› Archivo: <span class="underline">requirements.txt:14</span></p>
+                    <p class="text-vigil-ink-light ml-4">› Paquete: 'fastapi-auth-middleware' <span class="font-bold">NO EXISTE</span> en PyPI.</p>
+                    <p class="text-vigil-ink-light ml-4">› Riesgo: Alto potencial de Slopsquatting (Ejecución de código arbitrario).</p>
+                    
+                    <p class="text-vigil-alert font-bold mt-4">[ALERTA] TEST-001: Test Theater Detected</p>
+                    <p class="text-vigil-ink-light ml-4">› Archivo: <span class="underline">tests/test_auth.py:22</span></p>
+                    <p class="text-vigil-ink-light ml-4">› Función: 'test_verify_token' pasa pero no contiene asserts válidos.</p>
+
+                    <p class="text-vigil-ink mt-4">==================================================</p>
+                    <p class="font-bold text-vigil-alert">✗ Scan fallido: 2 problemas encontrados en 1.2s</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE PROBLEM (Agitation) -->
+        <section id="problema" class="bg-vigil-ink text-vigil-surface py-20 border-y-2 border-vigil-ink">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="col-span-1 md:col-span-3 border-b-2 border-vigil-surface pb-6 mb-8">
+                        <h2 class="font-space font-bold text-3xl md:text-5xl uppercase tracking-tight">El Gap que Semgrep no cubre</h2>
+                        <p class="font-mono mt-4 text-vigil-paper opacity-80 max-w-3xl">
+                            Las herramientas tradicionales buscan CVEs en código humano. Los agentes de IA introducen un nuevo vector de ataque de 0-days que los scanners actuales ignoran.
+                        </p>
+                    </div>
+
+                    <!-- Stat 1 -->
+                    <div class="border-2 border-vigil-surface p-6 shadow-brutal-white hover:-translate-y-1 transition-transform bg-vigil-ink">
+                        <div class="font-space font-bold text-5xl text-vigil-accent mb-2">20%</div>
+                        <h3 class="font-mono font-bold uppercase text-sm mb-4 border-b border-vigil-surface pb-2">Dependencias Falsas</h3>
+                        <p class="font-inter text-sm opacity-90">De los paquetes recomendados por LLMs no existen en ningún registry. Son alucinaciones esperando ser secuestradas por un atacante.</p>
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div class="border-2 border-vigil-surface p-6 shadow-brutal-white hover:-translate-y-1 transition-transform bg-vigil-ink">
+                        <div class="font-space font-bold text-5xl text-vigil-accent mb-2">45%</div>
+                        <h3 class="font-mono font-bold uppercase text-sm mb-4 border-b border-vigil-surface pb-2">Código Vulnerable</h3>
+                        <p class="font-inter text-sm opacity-90">Del código generado por IA contiene fallos de seguridad como over-permission, CORS desactivado o asserts vacíos en tests.</p>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div class="border-2 border-vigil-surface p-6 shadow-brutal-white hover:-translate-y-1 transition-transform bg-vigil-ink">
+                        <div class="font-space font-bold text-5xl text-vigil-accent mb-2">100%</div>
+                        <h3 class="font-mono font-bold uppercase text-sm mb-4 border-b border-vigil-surface pb-2">Riesgo de Slopsquatting</h3>
+                        <p class="font-inter text-sm opacity-90">Los nombres alucinados son repetibles. Atacantes registran esos paquetes en npm o PyPI para inyectar malware directo a tu máquina local.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: FEATURES (The Solution) -->
+        <section id="features" class="py-20 lg:py-32 bg-vigil-paper relative">
+            <!-- Patrón de fondo sutil -->
+            <div class="absolute inset-0 hatch-pattern opacity-50 pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="flex items-center gap-4 mb-12">
+                    <span class="p-2 border-2 border-vigil-ink bg-vigil-accent text-vigil-ink font-bold">◇</span>
+                    <h2 class="font-space font-bold text-4xl uppercase tracking-tight text-vigil-ink">Capacidades del Linter</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Feature Card 1 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal relative group">
+                        <div class="absolute top-0 right-0 bg-vigil-ink text-white font-mono text-xs px-2 py-1 border-l-2 border-b-2 border-vigil-ink">CAT-01</div>
+                        <h3 class="font-space font-bold text-xl mb-3 text-vigil-ink">Dependency Hallucination</h3>
+                        <p class="font-inter text-vigil-ink-light mb-4">Verifica la existencia real de dependencias. Bloquea el vector de ataque Slopsquatting verificando repositorios de npm, PyPI y crates.io en tiempo real.</p>
+                        <ul class="font-mono text-xs text-vigil-ink-light space-y-2">
+                            <li><span class="text-vigil-accent font-bold">✓</span> Detecta paquetes que no existen</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Alerta sobre paquetes < 30 días de vida</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Previene typosquatting avanzado</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 2 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal relative group">
+                        <div class="absolute top-0 right-0 bg-vigil-ink text-white font-mono text-xs px-2 py-1 border-l-2 border-b-2 border-vigil-ink">CAT-06</div>
+                        <h3 class="font-space font-bold text-xl mb-3 text-vigil-ink">Detección de "Test Theater"</h3>
+                        <p class="font-inter text-vigil-ink-light mb-4">Los LLMs a menudo generan tests que elevan el coverage pero no prueban nada. Vigil lee la semántica del test.</p>
+                        <ul class="font-mono text-xs text-vigil-ink-light space-y-2">
+                            <li><span class="text-vigil-accent font-bold">✓</span> Identifica funciones de test sin asserts</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Detecta mocks que replican la implementación</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Alerta sobre aserciones inútiles (ej. is_not_None)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 3 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal relative group">
+                        <div class="absolute top-0 right-0 bg-vigil-ink text-white font-mono text-xs px-2 py-1 border-l-2 border-b-2 border-vigil-ink">CAT-02</div>
+                        <h3 class="font-space font-bold text-xl mb-3 text-vigil-ink">Over-Permission & Auth Gaps</h3>
+                        <p class="font-inter text-vigil-ink-light mb-4">Las IAs priorizan que el código "funcione" sobre que sea seguro, abriendo endpoints y desactivando CORS para evitar errores.</p>
+                        <ul class="font-mono text-xs text-vigil-ink-light space-y-2">
+                            <li><span class="text-vigil-accent font-bold">✓</span> Endpoints sensibles sin middleware Auth</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> CORS configurado de forma permisiva (*)</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Archivos con permisos 777</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 4 -->
+                    <div class="bg-vigil-surface border-2 border-vigil-ink p-8 shadow-brutal relative group">
+                        <div class="absolute top-0 right-0 bg-vigil-ink text-white font-mono text-xs px-2 py-1 border-l-2 border-b-2 border-vigil-ink">CAT-03</div>
+                        <h3 class="font-space font-bold text-xl mb-3 text-vigil-ink">Secrets & Placeholders</h3>
+                        <p class="font-inter text-vigil-ink-light mb-4">Evita que secretos harcodeados o valores de ejemplo (copiados de .env.example) lleguen a tu entorno de producción.</p>
+                        <ul class="font-mono text-xs text-vigil-ink-light space-y-2">
+                            <li><span class="text-vigil-accent font-bold">✓</span> Valores como "sk-your-key-here" o "TODO"</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> JWT Secrets débiles o por defecto</li>
+                            <li><span class="text-vigil-accent font-bold">✓</span> Credenciales estáticas con baja entropía</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: INTEGRATION (Ecosystem) -->
+        <section class="py-20 border-t-2 border-vigil-ink bg-vigil-surface">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="font-space font-bold text-4xl uppercase tracking-tight text-vigil-ink mb-4">Integración sin fricción</h2>
+                    <p class="font-inter text-vigil-ink-light">Vigil es una CLI pura. Se integra en tu pipeline existente en minutos y genera reportes en formatos estándar.</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 items-stretch justify-center">
+                    
+                    <!-- Pre-commit -->
+                    <div class="flex-1 border-2 border-vigil-ink p-6">
+                        <div class="font-mono font-bold text-sm mb-4 flex items-center gap-2 border-b-2 border-vigil-ink pb-2">
+                            <span class="text-vigil-accent">◆</span> Pre-commit Hook
+                        </div>
+                        <pre class="font-mono text-xs text-vigil-ink-light overflow-x-auto bg-vigil-paper p-4 border-2 border-vigil-ink mt-4">
+repos:
+  - repo: https://github.com/vigil
+    rev: v1.0.0
+    hooks:
+      - id: vigil
+        args: [scan, --changed-only]</pre>
+                    </div>
+
+                    <!-- CI/CD -->
+                    <div class="flex-1 border-2 border-vigil-ink p-6">
+                        <div class="font-mono font-bold text-sm mb-4 flex items-center gap-2 border-b-2 border-vigil-ink pb-2">
+                            <span class="text-vigil-accent">◆</span> CI/CD (SARIF Export)
+                        </div>
+                        <pre class="font-mono text-xs text-vigil-ink-light overflow-x-auto bg-vigil-paper p-4 border-2 border-vigil-ink mt-4">
+- name: Scan AI Code
+  run: vigil scan src/ \
+       --format sarif \
+       --output report.sarif
+- uses: github/codeql-action/upload-sarif
+  with:
+    sarif_file: report.sarif</pre>
+                    </div>
+
+                    <!-- Architect Integration -->
+                    <div class="flex-1 border-2 border-vigil-ink p-6 bg-vigil-ink text-white relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-vigil-accent opacity-20 transform rotate-45 translate-x-8 -translate-y-8"></div>
+                        <div class="font-mono font-bold text-sm mb-4 flex items-center gap-2 border-b-2 border-vigil-surface pb-2">
+                            <span class="text-vigil-accent">◆</span> Architect Quality Gate
+                        </div>
+                        <pre class="font-mono text-xs text-vigil-paper overflow-x-auto p-4 border-2 border-vigil-surface mt-4 bg-black/30">
+# En tu .architect.yaml
+guardrails:
+  quality_gates:
+    - name: vigil
+      command: "vigil scan src/"
+      required: true</pre>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CTA -->
+        <section class="py-24 bg-vigil-accent border-t-2 border-vigil-ink text-center">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="font-space font-bold text-5xl md:text-6xl uppercase tracking-tight text-vigil-ink mb-6">Asegura tu código hoy</h2>
+                <p class="font-inter text-xl text-vigil-ink font-medium mb-10">Instala ruff para estilo. Instala Semgrep para CVEs.<br>Instala Vigil para alucinaciones de IA.</p>
+                
+                <div class="inline-flex flex-col sm:flex-row items-center gap-6">
+                    <div class="flex items-center border-2 border-vigil-ink bg-vigil-surface shadow-brutal">
+                        <span class="font-mono font-bold text-sm px-4 py-4 text-vigil-ink bg-vigil-paper border-r-2 border-vigil-ink">$</span>
+                        <code class="font-mono font-bold text-sm px-6 py-4 text-vigil-ink" id="install-cmd-bottom">pip install vigil-ai</code>
+                    </div>
+                    <a href="#" class="tech-btn bg-vigil-ink text-white font-space font-bold uppercase tracking-widest text-sm px-8 py-4 border-2 border-vigil-ink shadow-brutal">
+                        Leer Documentación
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-vigil-surface border-t-2 border-vigil-ink py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-vigil-ink">
+                    <polygon points="12,2 22,12 12,22 2,12" />
+                </svg>
+                <span class="font-space font-bold uppercase tracking-widest text-sm text-vigil-ink">vigil</span>
+            </div>
+            <div class="font-mono text-xs text-vigil-ink-light flex gap-6">
+                <span>© 2026 Vigil Security</span>
+                <a href="#" class="hover:text-vigil-accent underline decoration-2 underline-offset-4">Licencia MIT</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para copiar al portapapeles -->
+    <script>
+        function copyCmd() {
+            const cmdText = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(cmdText).then(() => {
+                // Feedback visual simple
+                const btn = document.querySelector('button[title="Copiar al portapapeles"]');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span class="text-sm font-bold block px-1">¡Copiado!</span>';
+                btn.classList.add('bg-vigil-accent', 'text-white');
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('bg-vigil-accent', 'text-white');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
