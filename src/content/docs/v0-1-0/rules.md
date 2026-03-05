@@ -1,390 +1,476 @@
 ---
-title: "Reglas"
-description: "Catálogo completo de reglas de detección: DEP, SEC, TEST."
-order: 4
+title: "Catalogo de Reglas"
+description: "Las 26 reglas de vigil en 4 categorias con ejemplos de codigo vulnerable."
+order: 5
 icon: "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2 M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 M9 5h6 M9 14l2 2 4-4"
 ---
 
-# Reglas de Detección
+# Catalogo de reglas
 
-Vigil organiza sus reglas en tres categorías principales. Cada regla tiene un identificador único, una severidad asignada y opciones de configuración.
+vigil V0 incluye 26 reglas en 4 categorias. Cada regla tiene un ID unico, severidad por defecto, y referencias a estandares de seguridad cuando aplica.
 
-Las categorías están diseñadas para cubrir los vectores de ataque más comunes introducidos por código generado con IA:
+Para listar todas las reglas desde la terminal:
 
-| Categoría | Prefijo | Enfoque |
-|-----------|---------|---------|
-| **Dependencias** | `DEP-` | Paquetes alucinados, typosquatting |
-| **Seguridad** | `SEC-` | Permisos excesivos, secretos expuestos |
-| **Tests** | `TEST-` | Tests falsos, cobertura artificial |
+```bash
+vigil rules
+```
 
 ---
 
-## DEP — Dependencias
+## CAT-01: Dependency Hallucination
 
-Reglas que verifican la existencia y legitimidad de las dependencias del proyecto. Estas reglas son la defensa principal contra **slopsquatting**.
+Detecta dependencias alucinadas (slopsquatting), typosquatting y paquetes sospechosos. Este es el diferenciador principal de vigil — ningun otro scanner verifica que las dependencias realmente existen.
 
-### DEP-001: Dependency Hallucination
+### DEP-001 — Hallucinated dependency
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Critical |
-| **Autocorrección** | No |
-| **Archivos** | `requirements.txt`, `package.json`, `Cargo.toml`, `go.mod` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+| OWASP | LLM03 — Supply Chain Vulnerabilities |
+| CWE | CWE-829 — Inclusion of Functionality from Untrusted Control Sphere |
 
-**Descripción**: Detecta paquetes que no existen en el registry correspondiente. Los LLMs frecuentemente inventan nombres de paquetes que suenan plausibles pero no existen. Un atacante puede registrar ese nombre en el registry y ejecutar código arbitrario en la máquina del desarrollador.
+**Que detecta:** Un paquete declarado como dependencia no existe en el registry publico (PyPI o npm).
 
-**Ejemplo de código vulnerable**:
+**Por que es critico:** Los LLMs frecuentemente generan nombres de paquetes que suenan plausibles pero no existen. Un atacante puede registrar ese nombre con codigo malicioso (slopsquatting). Cuando alguien ejecuta `pip install` o `npm install`, instala el paquete malicioso.
 
-```python
-# requirements.txt — generado por un LLM
+**Ejemplo de codigo vulnerable:**
+
+```
+# requirements.txt
 flask==3.0.0
-flask-sqlalchemy==3.1.1
-fastapi-auth-middleware==1.0.0    # ← NO EXISTE en PyPI
-python-jwt-validator==2.3.0       # ← NO EXISTE en PyPI
+python-jwt-utils==1.0.0    # Este paquete NO existe en PyPI
 requests==2.31.0
 ```
 
-**Salida de Vigil**:
+**Como corregirlo:** Buscar en PyPI/npm el paquete correcto. En este caso, probablemente el agente queria `PyJWT` o `python-jose`.
 
-```bash
-[CRÍTICO] DEP-001: Dependency Hallucination
-  › Archivo: requirements.txt:3
-  › Paquete: 'fastapi-auth-middleware' NO EXISTE en PyPI.
-  › Riesgo: Slopsquatting — un atacante puede registrar este nombre.
-  › Sugerencia: Verifica el nombre correcto. ¿Quisiste decir 'fastapi-users'?
+---
 
-[CRÍTICO] DEP-001: Dependency Hallucination
-  › Archivo: requirements.txt:4
-  › Paquete: 'python-jwt-validator' NO EXISTE en PyPI.
-  › Sugerencia: Alternativas reales: 'PyJWT', 'python-jose', 'authlib'.
+### DEP-002 — Suspiciously new dependency
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+| OWASP | LLM03 |
+
+**Que detecta:** El paquete existe pero fue publicado hace menos de 30 dias (configurable con `deps.min_age_days`).
+
+**Por que importa:** Los paquetes nuevos no han tenido tiempo de ser auditados por la comunidad. Podrian ser paquetes maliciosos registrados como parte de un ataque de slopsquatting.
+
+**Ejemplo:** Un paquete creado hace 3 dias con un nombre que suena util (`fast-json-parser`) pero que nadie ha revisado.
+
+**Como corregirlo:** Verificar manualmente el paquete: revisar el codigo fuente, el maintainer, el proposito. Si es legitimo, agregar una excepcion en la config.
+
+---
+
+### DEP-003 — Typosquatting candidate
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+| OWASP | LLM03 |
+| CWE | CWE-829 |
+
+**Que detecta:** El nombre del paquete es muy similar a un paquete popular (distancia de Levenshtein normalizada >= 0.85).
+
+**Ejemplo de codigo vulnerable:**
+
+```
+# requirements.txt
+reqeusts==2.31.0     # Typo de "requests"
 ```
 
-**Configuración**:
+**Como corregirlo:** Verificar el nombre correcto del paquete. En la sugerencia vigil indica el paquete popular al que se parece.
 
-```yaml
-rules:
-  DEP-001:
-    enabled: true
-    severity: critical
-    options:
-      registries: [pypi, npm, crates.io]  # Registries a verificar
-      cache_ttl: 3600                      # Cache en segundos
-      suggest_alternatives: true           # Sugerir paquetes similares
+---
+
+### DEP-004 — Unpopular dependency
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** El paquete tiene menos de 100 descargas semanales (configurable con `deps.min_weekly_downloads`).
+
+**Por que importa:** Los paquetes con muy pocas descargas pueden ser abandonados, tener vulnerabilidades no parchadas, o ser un indicador de un paquete falso.
+
+---
+
+### DEP-005 — No source repository
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** El paquete no tiene un repositorio de codigo fuente vinculado en su metadata.
+
+**Por que importa:** Sin acceso al codigo fuente, es imposible auditar que hace el paquete. Los paquetes legitimos casi siempre tienen un repositorio vinculado.
+
+---
+
+### DEP-006 — Missing dependency
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+
+**Que detecta:** Un `import` en el codigo referencia un modulo que no esta declarado en las dependencias del proyecto.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+# src/app.py
+import magical_orm    # No esta en requirements.txt ni pyproject.toml
+
+def get_users():
+    return magical_orm.query("SELECT * FROM users")
 ```
 
 ---
 
-### DEP-002: New Package Alert
+### DEP-007 — Nonexistent version
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Warning |
-| **Autocorrección** | No |
-| **Archivos** | `requirements.txt`, `package.json`, `Cargo.toml` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
 
-**Descripción**: Alerta sobre dependencias que fueron publicadas hace menos de 30 días. Los paquetes nuevos tienen mayor riesgo de ser maliciosos, especialmente si tienen nombres similares a paquetes populares.
+**Que detecta:** La version especificada del paquete no existe en el registry.
 
-**Ejemplo de detección**:
+**Ejemplo de codigo vulnerable:**
 
-```bash
-[ALERTA] DEP-002: New Package Alert
-  › Archivo: package.json:12
-  › Paquete: 'react-auth-helper' publicado hace 3 días en npm.
-  › Descargas totales: 47
-  › Sugerencia: Verifica manualmente el paquete antes de usarlo.
 ```
-
-**Configuración**:
-
-```yaml
-rules:
-  DEP-002:
-    enabled: true
-    severity: warning
-    options:
-      max_age_days: 30        # Alertar si el paquete tiene menos de N días
-      min_downloads: 100      # Umbral mínimo de descargas
+# requirements.txt
+flask==99.0.0        # Esta version no existe
 ```
 
 ---
 
-## SEC — Seguridad
+## CAT-02: Auth & Permission Patterns
 
-Reglas que detectan configuraciones de seguridad deficientes introducidas por código generado con IA. Los LLMs tienden a priorizar que el código "funcione" sobre que sea seguro.
+Detecta patrones de autenticacion y autorizacion inseguros que los agentes de IA generan con frecuencia.
 
-### SEC-001: Over-Permission
+### AUTH-001 — Unprotected sensitive endpoint
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Critical |
-| **Autocorrección** | No |
-| **Archivos** | `.py`, `.js`, `.ts` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+| OWASP | LLM06 — Excessive Agency |
+| CWE | CWE-306 — Missing Authentication for Critical Function |
 
-**Descripción**: Detecta endpoints HTTP sensibles (admin, pagos, gestión de usuarios) que no tienen middleware de autenticación o autorización.
+**Que detecta:** Un endpoint que maneja datos sensibles (usuarios, pagos, admin) sin middleware de autenticacion.
 
-**Ejemplo de código vulnerable**:
-
-```python
-# src/routes.py — generado por IA sin protección
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/api/users")
-async def list_users():                    # ← Sin middleware Auth
-    return db.get_all_users()
-
-@app.delete("/api/users/{user_id}")
-async def delete_user(user_id: int):       # ← Sin middleware Auth
-    return db.delete_user(user_id)
-
-@app.get("/api/admin/settings")
-async def admin_settings():               # ← Sin middleware Auth
-    return db.get_settings()
-```
-
-**Código corregido**:
+**Ejemplo de codigo vulnerable (FastAPI):**
 
 ```python
-from fastapi import FastAPI, Depends
-from app.auth import require_auth, require_admin
-
-app = FastAPI()
-
-@app.get("/api/users")
-async def list_users(user=Depends(require_auth)):
-    return db.get_all_users()
-
-@app.delete("/api/users/{user_id}")
-async def delete_user(user_id: int, user=Depends(require_admin)):
-    return db.delete_user(user_id)
-```
-
-**Configuración**:
-
-```yaml
-rules:
-  SEC-001:
-    enabled: true
-    options:
-      sensitive_paths:
-        - "/api/admin/*"
-        - "/api/users/*"
-        - "/api/payments/*"
-        - "/api/settings/*"
+@app.get("/users/{user_id}")
+async def get_user(user_id: int):    # Sin Depends(get_current_user)
+    return db.get_user(user_id)
 ```
 
 ---
 
-### SEC-002: Permissive CORS
+### AUTH-002 — Destructive endpoint without authorization
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Warning |
-| **Autocorrección** | No |
-| **Archivos** | `.py`, `.js`, `.ts` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+| CWE | CWE-862 — Missing Authorization |
 
-**Descripción**: Detecta configuraciones CORS con `allow_origins=["*"]` o `Access-Control-Allow-Origin: *`. Esto permite que cualquier sitio web realice peticiones a tu API, abriendo la puerta a ataques CSRF.
+**Que detecta:** Un endpoint DELETE o PUT sin verificacion de autorizacion.
 
-**Ejemplo de código vulnerable**:
+**Ejemplo de codigo vulnerable:**
 
 ```python
-from fastapi.middleware.cors import CORSMiddleware
-
-# IA genera esto para "que funcione rápido"
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],           # ← Permisivo
-    allow_credentials=True,        # ← Peligroso con origins=*
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.delete("/users/{user_id}")
+async def delete_user(user_id: int):    # Cualquiera puede borrar usuarios
+    db.delete_user(user_id)
+    return {"deleted": user_id}
 ```
 
-**Código corregido**:
+---
+
+### AUTH-003 — Excessive token lifetime
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** JWT con lifetime superior a 24 horas (configurable con `auth.max_token_lifetime_hours`).
+
+**Ejemplo de codigo vulnerable:**
 
 ```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://app.example.com",
-        "https://admin.example.com",
-    ],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+token = jwt.encode(
+    {"exp": datetime.utcnow() + timedelta(hours=72)},  # 72 horas
+    SECRET_KEY
 )
 ```
 
 ---
 
-### SEC-003: Hardcoded Secrets
+### AUTH-004 — Hardcoded JWT secret
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Critical |
-| **Autocorrección** | No |
-| **Archivos** | `.py`, `.js`, `.ts`, `.env`, `.yaml`, `.json` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+| CWE | CWE-798 — Use of Hard-coded Credentials |
 
-**Descripción**: Detecta secretos hardcodeados o valores placeholder que la IA copia de ejemplos y `.env.example` sin reemplazar por variables de entorno.
+**Que detecta:** JWT secret hardcodeado con un valor de placeholder o con entropia baja.
 
-**Patrones detectados**:
-
-```python
-# Todos estos son detectados por SEC-003:
-
-JWT_SECRET = "your-secret-key-here"        # Placeholder
-API_KEY = "sk-1234567890abcdef"            # Credencial real
-DATABASE_URL = "postgres://user:pass@localhost/db"  # Credencial en URL
-SECRET_KEY = "changeme"                     # Valor por defecto
-AWS_ACCESS_KEY = "AKIA1234567890EXAMPLE"   # Clave AWS
-```
-
-**Código corregido**:
+**Ejemplo de codigo vulnerable:**
 
 ```python
-import os
-
-JWT_SECRET = os.environ["JWT_SECRET"]
-API_KEY = os.environ["API_KEY"]
-DATABASE_URL = os.environ["DATABASE_URL"]
-```
-
-**Configuración**:
-
-```yaml
-rules:
-  SEC-003:
-    enabled: true
-    options:
-      entropy_threshold: 3.5    # Entropía Shannon mínima
-      patterns:
-        - "your-.*-here"
-        - "TODO"
-        - "CHANGEME"
-        - "example"
-        - "placeholder"
+SECRET_KEY = "supersecret123"    # Hardcodeado y predecible
+token = jwt.encode(payload, SECRET_KEY)
 ```
 
 ---
 
-## TEST — Tests
+### AUTH-005 — CORS allow all origins
 
-Reglas que detectan tests que no prueban nada real. Los LLMs generan tests que dan la ilusión de cobertura sin validar comportamiento.
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+| CWE | CWE-942 — Permissive Cross-domain Policy |
 
-### TEST-001: Test Theater
+**Que detecta:** CORS configurado con `*` permitiendo requests desde cualquier origen.
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Warning |
-| **Autocorrección** | No |
-| **Archivos** | `test_*.py`, `*.test.js`, `*.test.ts`, `*.spec.*` |
-
-**Descripción**: Detecta funciones de test que no contienen asserts válidos. Estos tests siempre pasan, inflando artificialmente las métricas de cobertura.
-
-**Ejemplo de test vacío (detectado)**:
+**Ejemplo de codigo vulnerable:**
 
 ```python
-def test_verify_token():
-    """Test generated by AI — looks good but tests nothing."""
-    token = create_token("user@test.com")
-    result = verify_token(token)
-    # ← No hay assert. El test siempre pasa.
+# FastAPI
+app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
-def test_create_user():
-    user = User(name="Test", email="test@test.com")
-    assert user is not None      # ← Assert inútil: nunca será None
-```
-
-**Test corregido**:
-
-```python
-def test_verify_token():
-    token = create_token("user@test.com")
-    result = verify_token(token)
-    assert result.valid is True
-    assert result.email == "user@test.com"
-    assert result.expires_at > datetime.utcnow()
-
-def test_create_user():
-    user = User(name="Test", email="test@test.com")
-    assert user.name == "Test"
-    assert user.email == "test@test.com"
-    assert user.id is not None
-```
-
-**Configuración**:
-
-```yaml
-rules:
-  TEST-001:
-    enabled: true
-    options:
-      min_asserts: 1          # Número mínimo de asserts por test
-      ignore_patterns:
-        - "test_smoke_*"      # Ignorar smoke tests
+# Express
+app.use(cors())    # Sin opciones = allow all
 ```
 
 ---
 
-### TEST-002: Mirror Mock
+### AUTH-006 — Insecure cookie configuration
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Severidad** | Info |
-| **Autocorrección** | No |
-| **Archivos** | `test_*.py`, `*.test.js`, `*.test.ts` |
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+| CWE | CWE-614 — Sensitive Cookie in HTTPS Session Without 'Secure' Attribute |
 
-**Descripción**: Detecta tests donde el mock replica exactamente la implementación real. Esto crea un test circular que nunca puede fallar.
+**Que detecta:** Cookies sin los flags de seguridad `httpOnly`, `secure`, o `sameSite`.
 
-**Ejemplo de mock espejo (detectado)**:
+---
+
+### AUTH-007 — Password comparison not timing-safe
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+| CWE | CWE-208 — Observable Timing Discrepancy |
+
+**Que detecta:** Comparacion de passwords usando `==` en lugar de una funcion de comparacion en tiempo constante.
+
+**Ejemplo de codigo vulnerable:**
 
 ```python
-def calculate_discount(price, percentage):
-    return price * (percentage / 100)
+if user.password == provided_password:    # Vulnerable a timing attacks
+    return True
+```
 
-# El mock replica la misma lógica — test circular
-@patch('app.pricing.calculate_discount')
-def test_discount(mock_calc):
-    mock_calc.side_effect = lambda p, pct: p * (pct / 100)  # ← Espejo
-    result = apply_discount(100, 20)
-    assert result == 80   # Siempre pasa porque el mock ES la implementación
+**Correccion:**
+
+```python
+import hmac
+if hmac.compare_digest(user.password_hash, computed_hash):
+    return True
 ```
 
 ---
 
-## Tabla Resumen
+## CAT-03: Secrets & Credentials
 
-| Regla | Categoría | Severidad | Descripción | Autofix |
-|-------|-----------|-----------|-------------|---------|
-| DEP-001 | Dependencias | Critical | Paquete inexistente en registry | No |
-| DEP-002 | Dependencias | Warning | Paquete publicado hace < 30 días | No |
-| SEC-001 | Seguridad | Critical | Endpoint sensible sin auth | No |
-| SEC-002 | Seguridad | Warning | CORS con origins=* | No |
-| SEC-003 | Seguridad | Critical | Secretos hardcodeados | No |
-| TEST-001 | Tests | Warning | Función test sin asserts válidos | No |
-| TEST-002 | Tests | Info | Mock que replica implementación | No |
+Detecta secrets y credenciales que los agentes de IA copian de ejemplos o generan de forma insegura.
 
-## Deshabilitar Reglas
+### SEC-001 — Placeholder secret in code
 
-### En configuración
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+| CWE | CWE-798 |
 
-```yaml
-rules:
-  TEST-002:
-    enabled: false
-```
+**Que detecta:** Un valor que parece un placeholder copiado de `.env.example` o documentacion.
 
-### En línea de comandos
-
-```bash
-vigil scan src/ --ignore DEP-002 --ignore TEST-002
-```
-
-### Inline (por archivo)
-
-Añade un comentario para ignorar una línea específica:
+**Ejemplo de codigo vulnerable:**
 
 ```python
-JWT_SECRET = "dev-only-secret"  # vigil-ignore: SEC-003
+API_KEY = "your-api-key-here"      # Placeholder copiado
+DATABASE_URL = "changeme"           # Placeholder
+```
+
+---
+
+### SEC-002 — Low-entropy hardcoded secret
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+| CWE | CWE-798 |
+
+**Que detecta:** Secret hardcodeado con entropia baja (probablemente generado por el agente de IA sin cuidado).
+
+**Ejemplo:** `SECRET = "abc123"` tiene entropia mucho menor que un secret real.
+
+---
+
+### SEC-003 — Embedded connection string
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+| CWE | CWE-798 |
+
+**Que detecta:** Connection strings con credenciales embebidas.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+DATABASE_URL = "postgresql://admin:password123@db.example.com:5432/mydb"
+MONGO_URI = "mongodb://root:secret@mongo:27017/app"
+```
+
+---
+
+### SEC-004 — Sensitive env with default value
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+
+**Que detecta:** Variable de entorno sensible con un valor por defecto hardcodeado en el codigo.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-not-for-production")
+```
+
+---
+
+### SEC-005 — Secret file not in gitignore
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+
+**Que detecta:** Archivos que contienen credenciales o keys y no estan listados en `.gitignore`.
+
+**Archivos tipicos:** `.env`, `credentials.json`, `*.pem`, `*.key`
+
+---
+
+### SEC-006 — Value copied from env example
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | CRITICAL |
+
+**Que detecta:** Un valor en el codigo que coincide textualmente con un valor del archivo `.env.example`.
+
+**Ejemplo:** Si `.env.example` tiene `API_KEY=sk-example-key-12345` y el codigo tiene `api_key = "sk-example-key-12345"`, vigil lo detecta.
+
+---
+
+## CAT-06: Test Quality
+
+Detecta tests que dan cobertura falsa — pasan pero no verifican nada real. Esto se conoce como "test theater".
+
+### TEST-001 — Test without assertions
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | HIGH |
+
+**Que detecta:** Una funcion de test que no contiene ningun assert, verify, expect ni similar.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+def test_login():
+    response = client.post("/login", json={"user": "admin", "pass": "123"})
+    # No hay assert — el test siempre pasa
+```
+
+---
+
+### TEST-002 — Trivial assertion
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** Assert que solo verifica condiciones triviales como `is not None` o `assertTrue(True)`.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+def test_user_exists():
+    user = get_user(1)
+    assert user is not None    # Trivial: no verifica el contenido
+```
+
+---
+
+### TEST-003 — Assert catches all exceptions
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** Tests que usan `except Exception: pass` o `except: pass`, ocultando errores reales.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+def test_complex_operation():
+    try:
+        result = complex_operation()
+    except Exception:    # Captura todo, el test nunca falla
+        pass
+```
+
+---
+
+### TEST-004 — Skipped test without reason
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | LOW |
+
+**Que detecta:** Tests marcados con `@pytest.mark.skip` o `@unittest.skip` sin un argumento `reason`.
+
+---
+
+### TEST-005 — No status code assertion in API test
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** Tests que hacen requests HTTP pero no verifican el status code de la respuesta.
+
+---
+
+### TEST-006 — Mock mirrors implementation
+
+| Campo | Valor |
+|-------|-------|
+| Severidad | MEDIUM |
+
+**Que detecta:** Mocks cuyo valor de retorno es exactamente el valor que el test espera, creando un test circular que no verifica logica real.
+
+**Ejemplo de codigo vulnerable:**
+
+```python
+def test_calculate():
+    with patch("app.calculate") as mock:
+        mock.return_value = 42        # El mock retorna 42
+        result = app.calculate(6, 7)
+        assert result == 42           # ...y el test espera 42. No se testo nada.
 ```

@@ -1,0 +1,328 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { t } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<section class="slopsquatting-section">
+  <div class="slopsquatting-inner">
+    <div class="slopsquatting-header">
+      <h2 class="slopsquatting-title">{t('slopsquatting.title', lang)}</h2>
+      <p class="slopsquatting-subtitle">{t('slopsquatting.subtitle', lang)}</p>
+    </div>
+
+    <div class="diagram crop-mark crop-tl crop-br">
+      <!-- Connecting line (desktop only) -->
+      <div class="connector-line" aria-hidden="true"></div>
+
+      <div class="steps-grid">
+        <!-- Step 1: Hallucination -->
+        <div class="step step--default">
+          <div class="step-number">1</div>
+          <div class="step-label">{t('slopsquatting.step1Label', lang)}</div>
+          <div class="step-title">{t('slopsquatting.step1Title', lang)}</div>
+          <div class="step-code">
+            <span>import </span><span class="step-code-highlight">{t('slopsquatting.step1Code', lang).replace('import ', '')}</span>
+          </div>
+        </div>
+
+        <!-- Step 2: The Attack -->
+        <div class="step step--alert">
+          <div class="step-hatch" aria-hidden="true"></div>
+          <div class="step-number step-number--alert">2</div>
+          <div class="step-label step-label--alert">{t('slopsquatting.step2Label', lang)}</div>
+          <div class="step-title step-title--alert">{t('slopsquatting.step2Title', lang)}</div>
+          <p class="step-desc step-desc--alert">{t('slopsquatting.step2Desc', lang)}</p>
+        </div>
+
+        <!-- Step 3: Vigil Intercepts -->
+        <div class="step step--vigil">
+          <div class="step-number step-number--vigil">&#9671;</div>
+          <div class="step-label step-label--vigil">{t('slopsquatting.step3Label', lang)}</div>
+          <div class="step-title step-title--vigil">{t('slopsquatting.step3Title', lang)}</div>
+          <div class="step-terminal">
+            <span class="terminal-critical">{t('slopsquatting.step3Line1', lang)}</span>
+            <span>{t('slopsquatting.step3Line2', lang)}</span>
+            <span>{t('slopsquatting.step3Line3', lang)}</span>
+          </div>
+        </div>
+
+        <!-- Step 4: Prevented -->
+        <div class="step step--faded">
+          <div class="step-number step-number--faded">3</div>
+          <div class="step-label">{t('slopsquatting.step4Label', lang)}</div>
+          <div class="step-title">{t('slopsquatting.step4Title', lang)}</div>
+          <p class="step-desc">{t('slopsquatting.step4Desc', lang)}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .slopsquatting-section {
+    padding: 5rem 0;
+    border-top: var(--border-width) solid var(--color-ink);
+    background: var(--color-paper);
+  }
+  .slopsquatting-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .slopsquatting-header {
+    text-align: center;
+    max-width: 48rem;
+    margin: 0 auto 3rem;
+  }
+  .slopsquatting-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    margin-bottom: 1rem;
+  }
+  .slopsquatting-subtitle {
+    font-family: var(--font-body);
+    color: var(--color-ink-light);
+    line-height: 1.5;
+  }
+
+  /* Diagram container */
+  .diagram {
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-ink);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow-brutal);
+    position: relative;
+  }
+
+  /* Connector line across all steps (desktop) */
+  .connector-line {
+    display: none;
+  }
+
+  /* Steps grid */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Base step card */
+  .step {
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-ink);
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+
+  /* Step number badge */
+  .step-number {
+    width: 2rem;
+    height: 2rem;
+    border: var(--border-width) solid var(--color-ink);
+    background: var(--color-paper);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -1rem;
+  }
+
+  .step-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    color: var(--color-ink-light);
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .step-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-code {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-lines);
+    padding: 0.5rem;
+    width: 100%;
+    color: var(--color-ink-light);
+  }
+
+  .step-code-highlight {
+    color: var(--color-alert);
+    font-weight: 700;
+  }
+
+  .step-desc {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--color-ink-light);
+    line-height: 1.4;
+  }
+
+  /* Step 2: Alert variant */
+  .step--alert {
+    border-color: var(--color-ink);
+    position: relative;
+  }
+
+  .step-hatch {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 4px,
+      #FECACA 4px,
+      #FECACA 5px
+    );
+    pointer-events: none;
+  }
+
+  .step-number--alert {
+    background: var(--color-alert);
+    color: white;
+    border-color: var(--color-alert);
+    box-shadow: var(--shadow-brutal-alert);
+  }
+
+  .step-label--alert {
+    color: var(--color-alert);
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-title--alert {
+    background: white;
+    padding: 0 0.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-desc--alert {
+    background: white;
+    padding: 0.5rem;
+    border: 1px solid var(--color-alert);
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Step 3: Vigil intercept */
+  .step--vigil {
+    background: var(--color-ink);
+    color: var(--color-surface);
+    border-color: var(--color-ink);
+    box-shadow: var(--shadow-brutal);
+  }
+
+  .step-number--vigil {
+    background: var(--color-accent);
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+    font-size: 1rem;
+  }
+
+  .step-label--vigil {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .step-title--vigil {
+    color: var(--color-accent);
+    font-size: 1.125rem;
+  }
+
+  .step-terminal {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-ink-light);
+    padding: 0.5rem;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    color: var(--color-paper);
+  }
+
+  .terminal-critical {
+    color: var(--color-alert);
+    font-weight: 700;
+  }
+
+  /* Step 4: Faded / Prevented */
+  .step--faded {
+    border-color: var(--color-lines);
+    background: var(--color-paper);
+  }
+
+  .step--faded .step-label,
+  .step--faded .step-desc {
+    color: #A3B8B0;
+  }
+
+  .step--faded .step-title {
+    color: #6B8078;
+  }
+
+  .step-number--faded {
+    border-color: var(--color-lines);
+    color: #A3B8B0;
+  }
+
+  /* Desktop layout */
+  @media (min-width: 768px) {
+    .diagram {
+      padding: 3rem 2rem;
+    }
+
+    .connector-line {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 3rem;
+      right: 3rem;
+      height: 2px;
+      background: var(--color-lines);
+      z-index: 0;
+    }
+
+    .steps-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .step--vigil {
+      transform: scale(1.05);
+      z-index: 20;
+    }
+  }
+</style>

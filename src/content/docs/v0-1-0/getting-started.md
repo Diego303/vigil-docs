@@ -1,191 +1,132 @@
 ---
-title: "Primeros Pasos"
-description: "Guía rápida para instalar y ejecutar Vigil por primera vez."
-order: 1
+title: "Inicio Rapido"
+description: "Instalacion, primer scan y conceptos basicos de vigil."
+order: 2
 icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z"
 ---
 
-# Primeros Pasos
+# Inicio rapido
 
-Vigil es un security scanner determinista diseñado específicamente para código generado por agentes de Inteligencia Artificial. A diferencia de herramientas como Semgrep o Bandit, Vigil se centra en detectar patrones exclusivos del código generado por LLMs: dependencias alucinadas, tests vacíos y configuraciones de seguridad permisivas.
+## Requisitos previos
 
-Esta guía te llevará desde cero hasta tu primer scan en menos de 5 minutos.
+- Python 3.12 o superior
+- pip (incluido con Python)
+- git (opcional, necesario para `--changed-only`)
 
-## Requisitos Previos
+## Instalacion
 
-Antes de comenzar, asegúrate de tener instalado:
-
-- **Python 3.9** o superior
-- **pip** actualizado (`pip install --upgrade pip`)
-- **Git** (opcional, necesario para `--changed-only`)
-- Acceso a la terminal de tu sistema operativo
-
-Puedes verificar tu versión de Python con:
+### Desde PyPI
 
 ```bash
-python --version
-# Python 3.11.4
+pip install vigil-ai-cli
 ```
 
-## Instalación Rápida
-
-Instala Vigil directamente desde PyPI:
+### Desde el codigo fuente (desarrollo)
 
 ```bash
-pip install vigil-ai
+git clone https://github.com/Diego303/vigil-cli.git
+cd vigil
+python3.12 -m venv .venv
+source .venv/bin/activate    # Linux/macOS
+# .venv\Scripts\activate     # Windows
+pip install -e ".[dev]"
 ```
 
-Verifica que la instalación fue exitosa:
+### Verificar la instalacion
 
 ```bash
 vigil --version
-# vigil v0.1.0
-
-vigil --help
-# Usage: vigil [OPTIONS] COMMAND [ARGS]...
-#
-# Commands:
-#   scan     Escanea un directorio en busca de vulnerabilidades
-#   init     Crea un archivo .vigil.yaml con la configuración por defecto
-#   rules    Lista todas las reglas disponibles
-#   version  Muestra la versión actual
+# vigil, version 0.1.0
 ```
 
-## Tu Primer Scan
+## Primer scan
 
-### Scan básico
-
-Ejecuta Vigil sobre tu directorio de código fuente:
+Ejecuta vigil sobre el directorio de tu proyecto:
 
 ```bash
 vigil scan src/
 ```
 
-Vigil analizará recursivamente todos los archivos soportados (`.py`, `.js`, `.ts`, `requirements.txt`, `package.json`, etc.) y mostrará un reporte en formato legible.
+Ejemplo de salida cuando no hay problemas:
 
-### Ejemplo de salida
+```
+  vigil v0.1.0 — scanned 42 files
 
-```bash
-$ vigil scan src/ --format human
+  No findings.
 
-◇ Vigil v0.1.0 — Analizando 42 archivos...
-==================================================
-
-[CRÍTICO] DEP-001: Dependency Hallucination
-  › Archivo: requirements.txt:14
-  › Paquete: 'fastapi-auth-middleware' NO EXISTE en PyPI.
-  › Riesgo: Alto potencial de Slopsquatting.
-  › Sugerencia: Verifica el nombre del paquete o elimínalo.
-
-[ALERTA] TEST-001: Test Theater Detected
-  › Archivo: tests/test_auth.py:22
-  › Función: 'test_verify_token' pasa pero no contiene asserts válidos.
-  › Sugerencia: Añade al menos un assert que valide el resultado.
-
-[ALERTA] SEC-002: Permissive CORS
-  › Archivo: src/main.py:8
-  › Detalle: allow_origins=["*"] permite acceso desde cualquier dominio.
-  › Sugerencia: Restringe los orígenes a dominios conocidos.
-
-==================================================
-✗ Scan fallido: 3 problemas encontrados en 1.4s
-  › 1 crítico, 2 alertas, 0 info
+  -------------------------------------------------
+  42 files scanned in 0.5s
+  0 findings
 ```
 
-### Interpretar los resultados
+Ejemplo de salida con hallazgos:
 
-Cada hallazgo incluye:
+```
+  vigil v0.1.0 — scanned 42 files
 
-| Campo | Descripción |
-|-------|-------------|
-| **Severidad** | `[CRÍTICO]`, `[ALERTA]` o `[INFO]` |
-| **Regla** | Identificador único (ej. `DEP-001`) |
-| **Archivo** | Ubicación exacta con número de línea |
-| **Detalle** | Descripción del problema encontrado |
-| **Sugerencia** | Acción recomendada para resolverlo |
+  X CRITICAL  DEP-001  requirements.txt:14
+    Package 'python-jwt-utils' does not exist in pypi.
+    This is likely a hallucinated dependency from an AI agent.
+    -> Suggestion: Remove 'python-jwt-utils' and find the correct package name.
 
-## Formatos de Salida
+  X HIGH      AUTH-005  src/main.py:8
+    CORS configured with '*' allowing requests from any origin.
+    -> Suggestion: Restrict CORS to specific trusted origins.
 
-Vigil soporta tres formatos de salida para adaptarse a diferentes flujos de trabajo:
-
-| Formato | Flag | Uso típico |
-|---------|------|------------|
-| Human | `--format human` | Lectura directa en terminal |
-| JSON | `--format json` | Integración con scripts y pipelines |
-| SARIF | `--format sarif` | GitHub Code Scanning y IDEs |
-
-### Exportar a JSON
-
-```bash
-vigil scan src/ --format json --output report.json
+  -------------------------------------------------
+  42 files scanned in 1.2s
+  2 findings: 1 critical, 1 high
+  analyzers: dependency, auth
 ```
 
-```json
-{
-  "version": "0.1.0",
-  "scan": {
-    "files_scanned": 42,
-    "duration_ms": 1400,
-    "status": "fail"
-  },
-  "findings": [
-    {
-      "rule": "DEP-001",
-      "severity": "critical",
-      "file": "requirements.txt",
-      "line": 14,
-      "message": "Package 'fastapi-auth-middleware' does not exist on PyPI",
-      "suggestion": "Verify the package name or remove it"
-    }
-  ]
-}
-```
+## Conceptos basicos
 
-### Exportar a SARIF (GitHub)
+### Que es un finding
 
-```bash
-vigil scan src/ --format sarif --output report.sarif
-```
+Un **finding** es un hallazgo de seguridad detectado por vigil. Cada finding tiene:
 
-Puedes subir el reporte SARIF directamente a GitHub Code Scanning:
+- **rule_id**: Identificador unico de la regla (ej. `DEP-001`, `AUTH-005`)
+- **severity**: Nivel de severidad (`critical`, `high`, `medium`, `low`, `info`)
+- **message**: Descripcion del problema encontrado
+- **location**: Archivo y linea donde se detecto
+- **suggestion**: Recomendacion concreta para corregirlo
 
-```yaml
-# .github/workflows/vigil.yml
-- name: Upload SARIF
-  uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: report.sarif
-```
+### Niveles de severidad
 
-## Inicializar Configuración
+| Nivel | Significado | Exit code |
+|-------|-------------|-----------|
+| `critical` | Debe corregirse antes de merge. Riesgo de seguridad inmediato. | 1 |
+| `high` | Deberia corregirse antes de merge. Riesgo significativo. | 1 |
+| `medium` | Deberia corregirse, no necesariamente antes de merge. | 0* |
+| `low` | Informativo, buena practica. | 0* |
+| `info` | Solo informativo, no es un problema. | 0* |
 
-Para crear un archivo `.vigil.yaml` con la configuración por defecto:
+*Por defecto, vigil falla (exit code 1) con findings `high` o superiores. Esto se puede cambiar con `--fail-on`.
 
-```bash
-vigil init
-# ✓ Creado .vigil.yaml con configuración por defecto
-```
+### Categorias
 
-Esto generará un archivo preconfigurado que puedes personalizar según las necesidades de tu proyecto.
+vigil organiza sus reglas en categorias:
 
-## Integración con Pre-commit
+| Categoria | Prefijo | Que detecta |
+|-----------|---------|-------------|
+| Dependency Hallucination | `DEP-` | Paquetes que no existen, typosquatting, paquetes sospechosamente nuevos |
+| Auth & Permission | `AUTH-` | Endpoints sin auth, CORS abierto, JWT inseguro, cookies sin flags |
+| Secrets & Credentials | `SEC-` | Secrets placeholder, credenciales hardcodeadas, connection strings |
+| Test Quality | `TEST-` | Tests sin asserts, asserts triviales, tests skipped sin razon |
 
-Añade Vigil como hook de pre-commit para escanear automáticamente cada commit:
+### Exit codes
 
-```yaml
-# .pre-commit-config.yaml
-repos:
-  - repo: https://github.com/Diego303/vigil-cli
-    rev: v0.1.0
-    hooks:
-      - id: vigil
-        args: [scan, --changed-only, --severity, warning]
-```
+| Codigo | Significado |
+|--------|-------------|
+| `0` | No hay findings por encima del threshold |
+| `1` | Se encontraron findings por encima del threshold |
+| `2` | Error de ejecucion (config invalida, error de red, etc.) |
 
-La flag `--changed-only` asegura que solo se escanean los archivos modificados en el commit, manteniendo el hook rápido.
+## Siguientes pasos
 
-## Siguiente Paso
-
-- Consulta la guía de [Instalación](/vigil-docs/docs/v0-1-0/installation/) para métodos alternativos
-- Personaliza las reglas en [Configuración](/vigil-docs/docs/v0-1-0/configuration/)
-- Explora el catálogo completo de [Reglas](/vigil-docs/docs/v0-1-0/rules/)
+- Genera un archivo de configuracion: `vigil init`
+- Explora todas las reglas: `vigil rules`
+- Analiza solo dependencias: `vigil deps --verify`
+- Analiza solo calidad de tests: `vigil tests tests/`
+- Integra vigil en tu CI/CD: ver [Integracion CI/CD](/vigil-docs/docs/v0-1-0/ci-cd/)
+- Consulta la referencia CLI completa: ver [Referencia CLI](/vigil-docs/docs/v0-1-0/cli/)
