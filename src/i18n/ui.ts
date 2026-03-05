@@ -4,7 +4,7 @@ export const defaultLang: Lang = 'es';
 export const ui = {
   es: {
     layout: {
-      title: 'Sentinel | Security Scanner para Código de IA',
+      title: 'Vigil | Security Scanner para Código de IA',
       description: 'El primer security scanner determinista dise\u00F1ado para c\u00F3digo generado por agentes de IA.',
     },
     nav: {
@@ -18,14 +18,14 @@ export const ui = {
       titleLine1: 'Tu IA escribe c\u00F3digo',
       titleHighlight: 'r\u00E1pido.',
       titleLine2: 'Tambi\u00E9n vulnerabilidades.',
-      description: 'Sentinel es el primer security scanner determinista dise\u00F1ado para c\u00F3digo generado por agentes de Inteligencia Artificial. Detecta slopsquatting, alucinaciones y falsos tests en segundos.',
-      installCmd: 'pip install sentinel-ai',
+      description: 'Vigil es el primer security scanner determinista dise\u00F1ado para c\u00F3digo generado por agentes de Inteligencia Artificial. Detecta slopsquatting, alucinaciones y falsos tests en segundos.',
+      installCmd: 'pip install vigil-ai',
       githubBtn: 'Github',
       tagline: 'Sin telemetr\u00EDa. Sin costes de API. Open Source.',
-      terminalTitle: 'Terminal \u2014 sentinel scan',
+      terminalTitle: 'Terminal \u2014 vigil scan',
       terminalLines: [
-        { type: 'prompt', text: 'sentinel scan src/ --format human' },
-        { type: 'info', text: '\u25C7 Sentinel V1.0 - Analizando 42 archivos...' },
+        { type: 'prompt', text: 'vigil scan src/ --format human' },
+        { type: 'info', text: '\u25C7 Vigil V1.0 - Analizando 42 archivos...' },
         { type: 'separator', text: '==================================================' },
         { type: 'critical', text: '[CR\u00CDTICO] DEP-001: Dependency Hallucination' },
         { type: 'detail', text: '\u203A Archivo: requirements.txt:14' },
@@ -71,7 +71,7 @@ export const ui = {
         {
           badge: 'CAT-06',
           title: 'Detecci\u00F3n de "Test Theater"',
-          description: 'Los LLMs a menudo generan tests que elevan el coverage pero no prueban nada. Sentinel lee la sem\u00E1ntica del test.',
+          description: 'Los LLMs a menudo generan tests que elevan el coverage pero no prueban nada. Vigil lee la sem\u00E1ntica del test.',
           items: ['Identifica funciones de test sin asserts', 'Detecta mocks que replican la implementaci\u00F3n', 'Alerta sobre aserciones in\u00FAtiles (ej. is_not_None)'],
         },
         {
@@ -90,22 +90,22 @@ export const ui = {
     },
     integration: {
       title: 'Integraci\u00F3n sin fricci\u00F3n',
-      subtitle: 'Sentinel es una CLI pura. Se integra en tu pipeline existente en minutos y genera reportes en formatos est\u00E1ndar.',
+      subtitle: 'Vigil es una CLI pura. Se integra en tu pipeline existente en minutos y genera reportes en formatos est\u00E1ndar.',
       precommit: 'Pre-commit Hook',
       cicd: 'CI/CD (SARIF Export)',
       architect: 'Architect Quality Gate',
     },
     cta: {
       title: 'Asegura tu c\u00F3digo hoy',
-      description: 'Instala ruff para estilo. Instala Semgrep para CVEs.\nInstala Sentinel para alucinaciones de IA.',
+      description: 'Instala ruff para estilo. Instala Semgrep para CVEs.\nInstala Vigil para alucinaciones de IA.',
       docsBtn: 'Leer Documentaci\u00F3n',
     },
     footer: {
-      copyright: '2026 Sentinel Project Security. Hecho con Claude Code',
+      copyright: '2026 Vigil Project Security. Hecho con Claude Code',
     },
     docsHub: {
       title: 'Documentaci\u00F3n',
-      subtitle: 'Explora las gu\u00EDas y referencia t\u00E9cnica de Sentinel',
+      subtitle: 'Explora las gu\u00EDas y referencia t\u00E9cnica de Vigil',
       searchPlaceholder: 'Buscar en la documentaci\u00F3n...',
       versionLabel: 'Versi\u00F3n',
       noResults: 'No se encontraron resultados.',
@@ -117,7 +117,7 @@ export const ui = {
   },
   en: {
     layout: {
-      title: 'Sentinel | Security Scanner for AI Code',
+      title: 'Vigil | Security Scanner for AI Code',
       description: 'The first deterministic security scanner designed for AI-generated code.',
     },
     nav: {
@@ -131,14 +131,14 @@ export const ui = {
       titleLine1: 'Your AI writes code',
       titleHighlight: 'fast.',
       titleLine2: 'Also vulnerabilities.',
-      description: 'Sentinel is the first deterministic security scanner designed for AI-generated code. It detects slopsquatting, hallucinations, and fake tests in seconds.',
-      installCmd: 'pip install sentinel-ai',
+      description: 'Vigil is the first deterministic security scanner designed for AI-generated code. It detects slopsquatting, hallucinations, and fake tests in seconds.',
+      installCmd: 'pip install vigil-ai',
       githubBtn: 'Github',
       tagline: 'No telemetry. No API costs. Open Source.',
-      terminalTitle: 'Terminal \u2014 sentinel scan',
+      terminalTitle: 'Terminal \u2014 vigil scan',
       terminalLines: [
-        { type: 'prompt', text: 'sentinel scan src/ --format human' },
-        { type: 'info', text: '\u25C7 Sentinel V1.0 - Scanning 42 files...' },
+        { type: 'prompt', text: 'vigil scan src/ --format human' },
+        { type: 'info', text: '\u25C7 Vigil V1.0 - Scanning 42 files...' },
         { type: 'separator', text: '==================================================' },
         { type: 'critical', text: '[CRITICAL] DEP-001: Dependency Hallucination' },
         { type: 'detail', text: '\u203A File: requirements.txt:14' },
@@ -184,7 +184,7 @@ export const ui = {
         {
           badge: 'CAT-06',
           title: '"Test Theater" Detection',
-          description: 'LLMs often generate tests that increase coverage but test nothing. Sentinel reads the semantic meaning of the test.',
+          description: 'LLMs often generate tests that increase coverage but test nothing. Vigil reads the semantic meaning of the test.',
           items: ['Identifies test functions without asserts', 'Detects mocks that replicate implementation', 'Alerts on useless assertions (e.g. is_not_None)'],
         },
         {
@@ -203,22 +203,22 @@ export const ui = {
     },
     integration: {
       title: 'Frictionless Integration',
-      subtitle: 'Sentinel is a pure CLI. It integrates into your existing pipeline in minutes and generates reports in standard formats.',
+      subtitle: 'Vigil is a pure CLI. It integrates into your existing pipeline in minutes and generates reports in standard formats.',
       precommit: 'Pre-commit Hook',
       cicd: 'CI/CD (SARIF Export)',
       architect: 'Architect Quality Gate',
     },
     cta: {
       title: 'Secure your code today',
-      description: 'Install ruff for style. Install Semgrep for CVEs.\nInstall Sentinel for AI hallucinations.',
+      description: 'Install ruff for style. Install Semgrep for CVEs.\nInstall Vigil for AI hallucinations.',
       docsBtn: 'Read Documentation',
     },
     footer: {
-      copyright: '2026 Sentinel Project Security. Made with Claude Code',
+      copyright: '2026 Vigil Project Security. Made with Claude Code',
     },
     docsHub: {
       title: 'Documentation',
-      subtitle: 'Explore Sentinel\'s guides and technical reference',
+      subtitle: 'Explore Vigil\'s guides and technical reference',
       searchPlaceholder: 'Search documentation...',
       versionLabel: 'Version',
       noResults: 'No results found.',

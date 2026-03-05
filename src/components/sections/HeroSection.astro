@@ -36,7 +36,7 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
               </svg>
             </button>
           </div>
-          <a href="https://github.com/Diego303/sentinel-cli" target="_blank" rel="noopener" class="tech-btn demo-btn">
+          <a href="https://github.com/Diego303/vigil-cli" target="_blank" rel="noopener" class="tech-btn demo-btn">
             {t('hero.githubBtn', lang)}
           </a>
         </div>
@@ -138,14 +138,16 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
   .hero-title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 2.75rem;
+    font-size: 2rem;
     line-height: 1.1;
     color: var(--color-ink);
+    overflow-wrap: break-word;
   }
   .highlight {
     color: var(--color-accent);
     background: var(--color-ink);
     padding: 0 0.5rem;
+    white-space: nowrap;
   }
   .hero-description {
     font-family: var(--font-body);
@@ -166,6 +168,7 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
     border: var(--border-width) solid var(--color-ink);
     background: var(--color-surface);
     box-shadow: var(--shadow-brutal);
+    max-width: 100%;
   }
   .install-prompt {
     font-family: var(--font-mono);
@@ -174,6 +177,7 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
     color: var(--color-ink-light);
     background: var(--color-paper);
     border-right: var(--border-width) solid var(--color-ink);
+    flex-shrink: 0;
   }
   .install-cmd {
     font-family: var(--font-mono);
@@ -181,6 +185,10 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
     padding: 0.75rem 1rem;
     flex: 1;
     color: var(--color-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .copy-btn {
     padding: 0.75rem;
@@ -256,9 +264,10 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
   }
   .terminal-body {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     line-height: 1.6;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .line { margin: 0; }
   .line + .line { margin-top: 0.125rem; }
@@ -281,6 +290,15 @@ const lines = t('hero.terminalLines', lang) as Array<{ type: string; text: strin
   }
   .prompt-user {
     color: var(--color-accent);
+  }
+
+  @media (min-width: 480px) {
+    .hero-title {
+      font-size: 2.75rem;
+    }
+    .terminal-body {
+      font-size: 0.8125rem;
+    }
   }
 
   @media (min-width: 640px) {

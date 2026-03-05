@@ -49,7 +49,7 @@ const descriptionLines = (t('cta.description', lang) as string).split('\n');
   .cta-title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 2.5rem;
+    font-size: 1.75rem;
     text-transform: uppercase;
     letter-spacing: -0.025em;
     color: var(--color-ink);
@@ -57,7 +57,7 @@ const descriptionLines = (t('cta.description', lang) as string).split('\n');
   }
   .cta-description {
     font-family: var(--font-body);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 500;
     color: var(--color-ink);
     margin-bottom: 2.5rem;
@@ -91,6 +91,10 @@ const descriptionLines = (t('cta.description', lang) as string).split('\n');
     font-size: 0.875rem;
     padding: 1rem 1.5rem;
     color: var(--color-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .cta-btn {
     background: var(--color-ink);
@@ -107,6 +111,15 @@ const descriptionLines = (t('cta.description', lang) as string).split('\n');
   @media (min-width: 640px) {
     .cta-actions {
       flex-direction: row;
+    }
+  }
+
+  @media (min-width: 480px) {
+    .cta-title {
+      font-size: 2.5rem;
+    }
+    .cta-description {
+      font-size: 1.25rem;
     }
   }
 

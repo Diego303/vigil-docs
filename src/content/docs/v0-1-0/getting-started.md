@@ -1,13 +1,13 @@
 ---
 title: "Primeros Pasos"
-description: "Guía rápida para instalar y ejecutar Sentinel por primera vez."
+description: "Guía rápida para instalar y ejecutar Vigil por primera vez."
 order: 1
 icon: "M13 2L3 14h9l-1 8 10-12h-9l1-8z"
 ---
 
 # Primeros Pasos
 
-Sentinel es un security scanner determinista diseñado específicamente para código generado por agentes de Inteligencia Artificial. A diferencia de herramientas como Semgrep o Bandit, Sentinel se centra en detectar patrones exclusivos del código generado por LLMs: dependencias alucinadas, tests vacíos y configuraciones de seguridad permisivas.
+Vigil es un security scanner determinista diseñado específicamente para código generado por agentes de Inteligencia Artificial. A diferencia de herramientas como Semgrep o Bandit, Vigil se centra en detectar patrones exclusivos del código generado por LLMs: dependencias alucinadas, tests vacíos y configuraciones de seguridad permisivas.
 
 Esta guía te llevará desde cero hasta tu primer scan en menos de 5 minutos.
 
@@ -29,24 +29,24 @@ python --version
 
 ## Instalación Rápida
 
-Instala Sentinel directamente desde PyPI:
+Instala Vigil directamente desde PyPI:
 
 ```bash
-pip install sentinel-ai
+pip install vigil-ai
 ```
 
 Verifica que la instalación fue exitosa:
 
 ```bash
-sentinel --version
-# sentinel v0.1.0
+vigil --version
+# vigil v0.1.0
 
-sentinel --help
-# Usage: sentinel [OPTIONS] COMMAND [ARGS]...
+vigil --help
+# Usage: vigil [OPTIONS] COMMAND [ARGS]...
 #
 # Commands:
 #   scan     Escanea un directorio en busca de vulnerabilidades
-#   init     Crea un archivo .sentinel.yaml con la configuración por defecto
+#   init     Crea un archivo .vigil.yaml con la configuración por defecto
 #   rules    Lista todas las reglas disponibles
 #   version  Muestra la versión actual
 ```
@@ -55,20 +55,20 @@ sentinel --help
 
 ### Scan básico
 
-Ejecuta Sentinel sobre tu directorio de código fuente:
+Ejecuta Vigil sobre tu directorio de código fuente:
 
 ```bash
-sentinel scan src/
+vigil scan src/
 ```
 
-Sentinel analizará recursivamente todos los archivos soportados (`.py`, `.js`, `.ts`, `requirements.txt`, `package.json`, etc.) y mostrará un reporte en formato legible.
+Vigil analizará recursivamente todos los archivos soportados (`.py`, `.js`, `.ts`, `requirements.txt`, `package.json`, etc.) y mostrará un reporte en formato legible.
 
 ### Ejemplo de salida
 
 ```bash
-$ sentinel scan src/ --format human
+$ vigil scan src/ --format human
 
-◇ Sentinel v0.1.0 — Analizando 42 archivos...
+◇ Vigil v0.1.0 — Analizando 42 archivos...
 ==================================================
 
 [CRÍTICO] DEP-001: Dependency Hallucination
@@ -106,7 +106,7 @@ Cada hallazgo incluye:
 
 ## Formatos de Salida
 
-Sentinel soporta tres formatos de salida para adaptarse a diferentes flujos de trabajo:
+Vigil soporta tres formatos de salida para adaptarse a diferentes flujos de trabajo:
 
 | Formato | Flag | Uso típico |
 |---------|------|------------|
@@ -117,7 +117,7 @@ Sentinel soporta tres formatos de salida para adaptarse a diferentes flujos de t
 ### Exportar a JSON
 
 ```bash
-sentinel scan src/ --format json --output report.json
+vigil scan src/ --format json --output report.json
 ```
 
 ```json
@@ -144,13 +144,13 @@ sentinel scan src/ --format json --output report.json
 ### Exportar a SARIF (GitHub)
 
 ```bash
-sentinel scan src/ --format sarif --output report.sarif
+vigil scan src/ --format sarif --output report.sarif
 ```
 
 Puedes subir el reporte SARIF directamente a GitHub Code Scanning:
 
 ```yaml
-# .github/workflows/sentinel.yml
+# .github/workflows/vigil.yml
 - name: Upload SARIF
   uses: github/codeql-action/upload-sarif@v3
   with:
@@ -159,26 +159,26 @@ Puedes subir el reporte SARIF directamente a GitHub Code Scanning:
 
 ## Inicializar Configuración
 
-Para crear un archivo `.sentinel.yaml` con la configuración por defecto:
+Para crear un archivo `.vigil.yaml` con la configuración por defecto:
 
 ```bash
-sentinel init
-# ✓ Creado .sentinel.yaml con configuración por defecto
+vigil init
+# ✓ Creado .vigil.yaml con configuración por defecto
 ```
 
 Esto generará un archivo preconfigurado que puedes personalizar según las necesidades de tu proyecto.
 
 ## Integración con Pre-commit
 
-Añade Sentinel como hook de pre-commit para escanear automáticamente cada commit:
+Añade Vigil como hook de pre-commit para escanear automáticamente cada commit:
 
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/Diego303/sentinel-cli
+  - repo: https://github.com/Diego303/vigil-cli
     rev: v0.1.0
     hooks:
-      - id: sentinel
+      - id: vigil
         args: [scan, --changed-only, --severity, warning]
 ```
 
@@ -186,6 +186,6 @@ La flag `--changed-only` asegura que solo se escanean los archivos modificados e
 
 ## Siguiente Paso
 
-- Consulta la guía de [Instalación](/sentinel-docs/docs/v0-1-0/installation/) para métodos alternativos
-- Personaliza las reglas en [Configuración](/sentinel-docs/docs/v0-1-0/configuration/)
-- Explora el catálogo completo de [Reglas](/sentinel-docs/docs/v0-1-0/rules/)
+- Consulta la guía de [Instalación](/vigil-docs/docs/v0-1-0/installation/) para métodos alternativos
+- Personaliza las reglas en [Configuración](/vigil-docs/docs/v0-1-0/configuration/)
+- Explora el catálogo completo de [Reglas](/vigil-docs/docs/v0-1-0/rules/)

@@ -7,7 +7,7 @@ icon: "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2
 
 # Detection Rules
 
-Sentinel organizes its rules into three main categories. Each rule has a unique identifier, an assigned severity, and configuration options.
+Vigil organizes its rules into three main categories. Each rule has a unique identifier, an assigned severity, and configuration options.
 
 The categories are designed to cover the most common attack vectors introduced by AI-generated code:
 
@@ -44,7 +44,7 @@ python-jwt-validator==2.3.0       # ← DOES NOT EXIST on PyPI
 requests==2.31.0
 ```
 
-**Sentinel output**:
+**Vigil output**:
 
 ```bash
 [CRITICAL] DEP-001: Dependency Hallucination
@@ -378,7 +378,7 @@ rules:
 ### On command line
 
 ```bash
-sentinel scan src/ --ignore DEP-002 --ignore TEST-002
+vigil scan src/ --ignore DEP-002 --ignore TEST-002
 ```
 
 ### Inline (per file)
@@ -386,5 +386,5 @@ sentinel scan src/ --ignore DEP-002 --ignore TEST-002
 Add a comment to ignore a specific line:
 
 ```python
-JWT_SECRET = "dev-only-secret"  # sentinel-ignore: SEC-003
+JWT_SECRET = "dev-only-secret"  # vigil-ignore: SEC-003
 ```

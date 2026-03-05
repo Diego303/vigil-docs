@@ -1,27 +1,27 @@
 ---
 title: "Configuración"
-description: "Referencia completa de .sentinel.yaml y flags de CLI."
+description: "Referencia completa de .vigil.yaml y flags de CLI."
 order: 3
 icon: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
 ---
 
 # Configuración
 
-Sentinel se configura mediante un archivo `.sentinel.yaml` en la raíz de tu proyecto, flags de línea de comandos o variables de entorno. Los flags de CLI siempre tienen prioridad sobre el archivo de configuración, y las variables de entorno tienen prioridad sobre ambos.
+Vigil se configura mediante un archivo `.vigil.yaml` en la raíz de tu proyecto, flags de línea de comandos o variables de entorno. Los flags de CLI siempre tienen prioridad sobre el archivo de configuración, y las variables de entorno tienen prioridad sobre ambos.
 
 ## Inicialización
 
 Genera un archivo de configuración con los valores por defecto:
 
 ```bash
-sentinel init
-# ✓ Creado .sentinel.yaml
+vigil init
+# ✓ Creado .vigil.yaml
 ```
 
 ## Archivo de Configuración Completo
 
 ```yaml
-# .sentinel.yaml — Configuración completa de Sentinel
+# .vigil.yaml — Configuración completa de Vigil
 version: "1"
 
 # Opciones de escaneo
@@ -117,7 +117,7 @@ output:
 ### Comando `scan`
 
 ```bash
-sentinel scan [PATH...] [OPTIONS]
+vigil scan [PATH...] [OPTIONS]
 ```
 
 | Flag | Tipo | Default | Descripción |
@@ -126,7 +126,7 @@ sentinel scan [PATH...] [OPTIONS]
 | `--output` | `path` | `stdout` | Ruta del archivo de salida |
 | `--changed-only` | `flag` | `false` | Solo escanear archivos con cambios en Git |
 | `--severity` | `string` | `info` | Severidad mínima: `info`, `warning`, `critical` |
-| `--config` | `path` | `.sentinel.yaml` | Ruta al archivo de configuración |
+| `--config` | `path` | `.vigil.yaml` | Ruta al archivo de configuración |
 | `--no-colors` | `flag` | `false` | Deshabilitar colores en la salida |
 | `--verbose` | `flag` | `false` | Mostrar cada archivo escaneado |
 | `--quiet` | `flag` | `false` | Solo mostrar hallazgos críticos |
@@ -136,7 +136,7 @@ sentinel scan [PATH...] [OPTIONS]
 ### Comando `rules`
 
 ```bash
-sentinel rules [OPTIONS]
+vigil rules [OPTIONS]
 ```
 
 | Flag | Descripción |
@@ -147,7 +147,7 @@ sentinel rules [OPTIONS]
 ### Comando `init`
 
 ```bash
-sentinel init [OPTIONS]
+vigil init [OPTIONS]
 ```
 
 | Flag | Descripción |
@@ -157,23 +157,23 @@ sentinel init [OPTIONS]
 
 ## Variables de Entorno
 
-Todas las opciones pueden configurarse mediante variables de entorno con el prefijo `SENTINEL_`:
+Todas las opciones pueden configurarse mediante variables de entorno con el prefijo `VIGIL_`:
 
 | Variable | Equivale a |
 |----------|------------|
-| `SENTINEL_FORMAT` | `--format` |
-| `SENTINEL_SEVERITY` | `--severity` |
-| `SENTINEL_CONFIG` | `--config` |
-| `SENTINEL_NO_COLORS` | `--no-colors` |
-| `SENTINEL_QUIET` | `--quiet` |
+| `VIGIL_FORMAT` | `--format` |
+| `VIGIL_SEVERITY` | `--severity` |
+| `VIGIL_CONFIG` | `--config` |
+| `VIGIL_NO_COLORS` | `--no-colors` |
+| `VIGIL_QUIET` | `--quiet` |
 
 Ejemplo:
 
 ```bash
-export SENTINEL_FORMAT=json
-export SENTINEL_SEVERITY=warning
-sentinel scan src/
-# Equivale a: sentinel scan src/ --format json --severity warning
+export VIGIL_FORMAT=json
+export VIGIL_SEVERITY=warning
+vigil scan src/
+# Equivale a: vigil scan src/ --format json --severity warning
 ```
 
 ## Ejemplos de Uso
@@ -181,7 +181,7 @@ sentinel scan src/
 ### Proyecto Python con FastAPI
 
 ```yaml
-# .sentinel.yaml
+# .vigil.yaml
 version: "1"
 scan:
   paths: [app/, tests/]
@@ -236,17 +236,17 @@ rules:
 La configuración se resuelve con el siguiente orden de prioridad (de mayor a menor):
 
 1. Flags de CLI (`--format json`)
-2. Variables de entorno (`SENTINEL_FORMAT=json`)
-3. Archivo de configuración (`.sentinel.yaml`)
+2. Variables de entorno (`VIGIL_FORMAT=json`)
+3. Archivo de configuración (`.vigil.yaml`)
 4. Valores por defecto internos
 
 ## Validación
 
-Sentinel valida el archivo de configuración al inicio de cada scan. Si hay errores de formato o valores inválidos, se muestra un error descriptivo:
+Vigil valida el archivo de configuración al inicio de cada scan. Si hay errores de formato o valores inválidos, se muestra un error descriptivo:
 
 ```bash
-$ sentinel scan src/
-✗ Error en .sentinel.yaml:
+$ vigil scan src/
+✗ Error en .vigil.yaml:
   › Línea 15: El valor 'extreme' no es válido para severity.
   › Valores aceptados: info, warning, critical
 ```

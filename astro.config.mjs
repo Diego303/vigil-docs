@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://Diego303.github.io',
-  base: '/sentinel-docs/',
+  base: '/vigil-docs/',
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en'],

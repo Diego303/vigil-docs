@@ -104,6 +104,9 @@
     width: 100%;
     border-collapse: collapse;
     margin: 1.5em 0;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .prose :global(th) {
@@ -114,12 +117,31 @@
     padding: 0.75em;
     border: var(--border-width) solid var(--color-ink);
     background: var(--color-paper);
+    white-space: nowrap;
   }
 
   .prose :global(td) {
     padding: 0.75em;
     border: 1px solid var(--color-lines);
     font-size: 0.9375rem;
+  }
+
+  @media (max-width: 640px) {
+    .prose :global(h1) { font-size: 1.75rem; }
+    .prose :global(h2) { font-size: 1.25rem; }
+    .prose :global(h3) { font-size: 1.125rem; }
+
+    .prose :global(pre) {
+      font-size: 0.8125rem;
+      padding: 1rem;
+      box-shadow: 2px 2px 0px 0px var(--color-ink);
+    }
+
+    .prose :global(th),
+    .prose :global(td) {
+      padding: 0.5em;
+      font-size: 0.8125rem;
+    }
   }
 
   .prose :global(hr) {

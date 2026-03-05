@@ -14,6 +14,29 @@ const { headings, title, versionLabel, backLink, lang } = Astro.props;
 const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 ---
 
+<!-- Mobile TOC -->
+<div class="mobile-toc">
+  <a href={backLink} class="back-link">
+    &larr; {t('sidebar.backToDocs', lang)}
+  </a>
+  <button class="mobile-toc-toggle" aria-expanded="false">
+    <span class="mobile-toc-label">{t('sidebar.tableOfContents', lang)}</span>
+    <svg class="mobile-toc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+  <nav class="mobile-toc-nav" hidden>
+    <ul>
+      {tocHeadings.map(h => (
+        <li class:list={[{ 'toc-h3': h.depth === 3 }]}>
+          <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>
+
+<!-- Desktop sidebar -->
 <aside class="sidebar">
   <div class="sidebar-inner">
     <a href={backLink} class="back-link">
@@ -47,19 +70,108 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           tocLinks.forEach(link => link.classList.remove('active'));
-          const activeLink = document.querySelector(
+          const activeLink = document.querySelectorAll(
             `.toc-link[href="#${entry.target.id}"]`
           );
-          activeLink?.classList.add('active');
+          activeLink.forEach(l => l.classList.add('active'));
         }
       });
     }, { rootMargin: '-80px 0px -80% 0px' });
 
     headings.forEach(h => observer.observe(h));
+
+    // Mobile TOC toggle
+    const toggle = document.querySelector('.mobile-toc-toggle');
+    const mobileNav = document.querySelector('.mobile-toc-nav');
+    if (toggle && mobileNav) {
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        (mobileNav as HTMLElement).hidden = expanded;
+      });
+      // Close mobile TOC on link click
+      mobileNav.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', () => {
+          toggle.setAttribute('aria-expanded', 'false');
+          (mobileNav as HTMLElement).hidden = true;
+        });
+      });
+    }
   });
 </script>
 
 <style>
+  /* Mobile TOC */
+  .mobile-toc {
+    display: block;
+    background: var(--color-surface);
+    border-bottom: var(--border-width) solid var(--color-ink);
+    padding: 0.75rem 1rem;
+  }
+  .mobile-toc .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-ink-light);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: color 0.15s;
+  }
+  .mobile-toc .back-link:hover {
+    color: var(--color-accent);
+  }
+  .mobile-toc-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: var(--color-paper);
+    border: 1px solid var(--color-lines);
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-ink);
+  }
+  .mobile-toc-chevron {
+    margin-left: auto;
+    transition: transform 0.15s;
+  }
+  .mobile-toc-toggle[aria-expanded="true"] .mobile-toc-chevron {
+    transform: rotate(180deg);
+  }
+  .mobile-toc-nav {
+    padding: 0.5rem 0;
+  }
+  .mobile-toc-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .mobile-toc-nav li {
+    margin-bottom: 0.125rem;
+  }
+  .mobile-toc-nav .toc-h3 {
+    padding-left: 1rem;
+  }
+  .mobile-toc-nav .toc-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-ink-light);
+    text-decoration: none;
+    display: block;
+    padding: 0.375rem 0.75rem;
+    transition: color 0.15s;
+  }
+  .mobile-toc-nav .toc-link:hover,
+  .mobile-toc-nav .toc-link.active {
+    color: var(--color-accent);
+  }
+
+  /* Desktop sidebar */
   .sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;
@@ -143,6 +255,9 @@ const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
   }
 
   @media (min-width: 1024px) {
+    .mobile-toc {
+      display: none;
+    }
     .sidebar {
       display: block;
     }

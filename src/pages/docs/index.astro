@@ -99,7 +99,7 @@ const docsByVersion = VERSIONS.map(v => ({
   .docs-hub {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 3rem 1.5rem 5rem;
+    padding: 2rem 1rem 5rem;
     flex-grow: 1;
   }
   .hub-header {
@@ -108,7 +108,7 @@ const docsByVersion = VERSIONS.map(v => ({
   .hub-title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 2.5rem;
+    font-size: 1.75rem;
     text-transform: uppercase;
     letter-spacing: -0.025em;
     color: var(--color-ink);
@@ -117,7 +117,7 @@ const docsByVersion = VERSIONS.map(v => ({
   .hub-subtitle {
     font-family: var(--font-body);
     color: var(--color-ink-light);
-    font-size: 1.125rem;
+    font-size: 1rem;
     margin-bottom: 2rem;
   }
   .hub-controls {
@@ -204,6 +204,15 @@ const docsByVersion = VERSIONS.map(v => ({
   }
 
   @media (min-width: 640px) {
+    .docs-hub {
+      padding: 3rem 1.5rem 5rem;
+    }
+    .hub-title {
+      font-size: 2.5rem;
+    }
+    .hub-subtitle {
+      font-size: 1.125rem;
+    }
     .hub-controls {
       flex-direction: row;
       align-items: stretch;
