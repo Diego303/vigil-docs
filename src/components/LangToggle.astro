@@ -1,0 +1,53 @@
+---
+import type { Lang } from '../i18n/ui';
+import { getAlternateLangPath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const alternateLang: Lang = lang === 'es' ? 'en' : 'es';
+const alternateUrl = getAlternateLangPath(Astro.url, alternateLang);
+---
+
+<div class="lang-toggle">
+  {lang === 'es' ? (
+    <Fragment>
+      <span class="current">ES</span>
+      <span class="separator">/</span>
+      <a href={alternateUrl} class="alternate">EN</a>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <a href={alternateUrl} class="alternate">ES</a>
+      <span class="separator">/</span>
+      <span class="current">EN</span>
+    </Fragment>
+  )}
+</div>
+
+<style>
+  .lang-toggle {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .current {
+    color: var(--color-accent);
+  }
+  .alternate {
+    color: var(--color-ink-light);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .alternate:hover {
+    color: var(--color-accent);
+  }
+  .separator {
+    color: var(--color-lines);
+  }
+</style>

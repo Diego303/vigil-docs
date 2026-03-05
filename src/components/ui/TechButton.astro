@@ -1,0 +1,44 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  uppercase?: boolean;
+  class?: string;
+}
+
+const { href, variant = 'primary', uppercase = true, class: className = '' } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  class:list={['tech-btn', `tech-btn--${variant}`, { uppercase }, className]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .tech-btn--primary {
+    background: var(--color-ink);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.75rem 2rem;
+    letter-spacing: 0.1em;
+  }
+  .tech-btn--primary:hover {
+    background: var(--color-accent);
+  }
+  .tech-btn--secondary {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.75rem 1.5rem;
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+</style>

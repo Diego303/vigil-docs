@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import Navbar from '../../../components/Navbar.astro';
+import DocsSidebar from '../../../components/DocsSidebar.astro';
+import Prose from '../../../components/ui/Prose.astro';
+import { getLocalizedPath } from '../../../i18n/utils';
+import { getVersionFromSlug } from '../../../config/versions';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs-en');
+  return docs.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const lang = 'en';
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const versionId = getVersionFromSlug(entry.id);
+const versionLabel = versionId.replace(/-/g, '.').replace('v', 'v');
+---
+
+<Layout lang={lang} title={entry.data.title}>
+  <Navbar lang={lang} />
+  <div class="docs-layout">
+    <DocsSidebar
+      headings={headings}
+      title={entry.data.title ?? ''}
+      versionLabel={versionLabel}
+      backLink={getLocalizedPath('/docs/', lang)}
+      lang={lang}
+    />
+    <main class="docs-content">
+      <Prose>
+        <Content />
+      </Prose>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .docs-layout {
+    display: flex;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    min-height: calc(100vh - 73px);
+  }
+  .docs-content {
+    flex: 1;
+    padding: 2rem 1.5rem 4rem;
+    overflow-x: hidden;
+    min-width: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .docs-content {
+      padding: 2rem 3rem 4rem;
+    }
+  }
+</style>

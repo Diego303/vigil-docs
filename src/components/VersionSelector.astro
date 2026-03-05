@@ -1,0 +1,57 @@
+---
+import type { Lang } from '../i18n/ui';
+import type { VersionConfig } from '../config/versions';
+
+interface Props {
+  lang: Lang;
+  currentVersion: string;
+  versions: VersionConfig[];
+}
+
+const { currentVersion, versions } = Astro.props;
+---
+
+<select class="version-select" data-current={currentVersion}>
+  {versions.map(v => (
+    <option value={v.id} selected={v.id === currentVersion}>
+      {v.label} {v.latest ? '(latest)' : ''}
+    </option>
+  ))}
+</select>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const select = document.querySelector('.version-select') as HTMLSelectElement;
+    if (!select) return;
+    select.addEventListener('change', () => {
+      const version = select.value;
+      document.querySelectorAll('[data-version]').forEach(el => {
+        (el as HTMLElement).style.display =
+          el.getAttribute('data-version') === version ? '' : 'none';
+      });
+      // Also reset search
+      const search = document.getElementById('docs-search') as HTMLInputElement;
+      if (search) search.value = '';
+    });
+  });
+</script>
+
+<style>
+  .version-select {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.625rem 1rem;
+    border: var(--border-width) solid var(--color-ink);
+    border-radius: var(--border-radius);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    cursor: pointer;
+    appearance: auto;
+    min-width: 140px;
+  }
+  .version-select:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

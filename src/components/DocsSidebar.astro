@@ -1,0 +1,150 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/utils';
+
+interface Props {
+  headings: Array<{ depth: number; slug: string; text: string }>;
+  title: string;
+  versionLabel: string;
+  backLink: string;
+  lang: Lang;
+}
+
+const { headings, title, versionLabel, backLink, lang } = Astro.props;
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <a href={backLink} class="back-link">
+      &larr; {t('sidebar.backToDocs', lang)}
+    </a>
+
+    <div class="version-badge">{versionLabel}</div>
+
+    <div class="sidebar-divider"></div>
+
+    <h4 class="toc-heading">{t('sidebar.tableOfContents', lang)}</h4>
+    <nav class="toc">
+      <ul>
+        {tocHeadings.map(h => (
+          <li class:list={[{ 'toc-h3': h.depth === 3 }]}>
+            <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const headings = document.querySelectorAll('.docs-content h2[id], .docs-content h3[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    if (!headings.length || !tocLinks.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(link => link.classList.remove('active'));
+          const activeLink = document.querySelector(
+            `.toc-link[href="#${entry.target.id}"]`
+          );
+          activeLink?.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -80% 0px' });
+
+    headings.forEach(h => observer.observe(h));
+  });
+</script>
+
+<style>
+  .sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    border-right: var(--border-width) solid var(--color-ink);
+    background: var(--color-surface);
+    display: none;
+  }
+  .sidebar-inner {
+    position: sticky;
+    top: 73px;
+    padding: 2rem 1.5rem;
+    max-height: calc(100vh - 73px);
+    overflow-y: auto;
+  }
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-ink-light);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1rem;
+    transition: color 0.15s;
+  }
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+  .version-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-ink-light);
+    background: var(--color-paper);
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-lines);
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  .sidebar-divider {
+    height: 1px;
+    background: var(--color-lines);
+    margin-bottom: 1.5rem;
+  }
+  .toc-heading {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-ink);
+    margin-bottom: 1rem;
+  }
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc li {
+    margin-bottom: 0.25rem;
+  }
+  .toc-h3 {
+    padding-left: 1rem;
+  }
+  .toc-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-ink-light);
+    text-decoration: none;
+    display: block;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .toc-link:hover {
+    color: var(--color-accent);
+  }
+  .toc-link.active,
+  .toc-link:global(.active) {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  @media (min-width: 1024px) {
+    .sidebar {
+      display: block;
+    }
+  }
+</style>

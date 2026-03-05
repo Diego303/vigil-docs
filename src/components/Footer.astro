@@ -1,0 +1,74 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="12,2 22,12 12,22 2,12" />
+      </svg>
+      <span>sentinel</span>
+    </div>
+    <div class="footer-meta">
+      <span>&copy; {t('footer.copyright', lang)}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-surface);
+    border-top: var(--border-width) solid var(--color-ink);
+    padding: 2rem 0;
+  }
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+  }
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-ink-light);
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-meta a {
+    color: var(--color-ink-light);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+  }
+  .footer-meta a:hover {
+    color: var(--color-accent);
+  }
+  @media (min-width: 768px) {
+    .footer-inner {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+</style>

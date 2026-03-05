@@ -1,0 +1,103 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { t } from '../../i18n/utils';
+import FeatureCard from '../ui/FeatureCard.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const cards = t('features.cards', lang) as Array<{
+  badge: string;
+  title: string;
+  description: string;
+  items: string[];
+}>;
+---
+
+<section id="features" class="features-section">
+  <div class="features-bg hatch-pattern"></div>
+
+  <div class="features-inner">
+    <div class="features-header">
+      <span class="diamond-icon">&#9671;</span>
+      <h2 class="features-title">{t('features.title', lang)}</h2>
+    </div>
+
+    <div class="features-grid">
+      {cards.map(card => (
+        <FeatureCard
+          badge={card.badge}
+          title={card.title}
+          description={card.description}
+          items={card.items}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-section {
+    padding: 5rem 0;
+    background: var(--color-paper);
+    position: relative;
+  }
+  .features-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .features-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .features-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .diamond-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: var(--border-width) solid var(--color-ink);
+    background: var(--color-accent);
+    color: var(--color-ink);
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  .features-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .features-section {
+      padding: 8rem 0;
+    }
+  }
+</style>

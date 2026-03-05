@@ -1,0 +1,118 @@
+---
+import type { Lang } from '../../i18n/ui';
+import { t, getLocalizedPath } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const descriptionLines = (t('cta.description', lang) as string).split('\n');
+---
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-title">{t('cta.title', lang)}</h2>
+    <p class="cta-description">
+      {descriptionLines.map((line: string, i: number) => (
+        <>
+          {line}
+          {i < descriptionLines.length - 1 && <br />}
+        </>
+      ))}
+    </p>
+
+    <div class="cta-actions">
+      <div class="install-block">
+        <span class="install-prompt">$</span>
+        <code class="install-cmd">{t('hero.installCmd', lang)}</code>
+      </div>
+      <a href={getLocalizedPath('/docs/', lang)} class="tech-btn cta-btn">
+        {t('cta.docsBtn', lang)}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: 6rem 0;
+    background: var(--color-accent);
+    border-top: var(--border-width) solid var(--color-ink);
+    text-align: center;
+  }
+  .cta-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .cta-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+    margin-bottom: 1.5rem;
+  }
+  .cta-description {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+  .cta-actions {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .install-block {
+    display: flex;
+    align-items: center;
+    border: var(--border-width) solid var(--color-ink);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-brutal);
+  }
+  .install-prompt {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 1rem;
+    color: var(--color-ink);
+    background: var(--color-paper);
+    border-right: var(--border-width) solid var(--color-ink);
+  }
+  .install-cmd {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 1rem 1.5rem;
+    color: var(--color-ink);
+  }
+  .cta-btn {
+    background: var(--color-ink);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.875rem;
+    padding: 1rem 2rem;
+    text-decoration: none;
+  }
+
+  @media (min-width: 640px) {
+    .cta-actions {
+      flex-direction: row;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .cta-title {
+      font-size: 3.5rem;
+    }
+  }
+</style>

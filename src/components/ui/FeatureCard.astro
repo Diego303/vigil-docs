@@ -1,0 +1,74 @@
+---
+interface Props {
+  badge: string;
+  title: string;
+  description: string;
+  items: string[];
+}
+
+const { badge, title, description, items } = Astro.props;
+---
+
+<div class="feature-card">
+  <div class="feature-badge">{badge}</div>
+  <h3 class="feature-title">{title}</h3>
+  <p class="feature-description">{description}</p>
+  <ul class="feature-items">
+    {items.map(item => (
+      <li>
+        <span class="check">&check;</span> {item}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .feature-card {
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-ink);
+    padding: 2rem;
+    box-shadow: var(--shadow-brutal);
+    position: relative;
+  }
+  .feature-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--color-ink);
+    color: var(--color-surface);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-left: var(--border-width) solid var(--color-ink);
+    border-bottom: var(--border-width) solid var(--color-ink);
+  }
+  .feature-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-ink);
+  }
+  .feature-description {
+    font-family: var(--font-body);
+    color: var(--color-ink-light);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    font-size: 0.9375rem;
+  }
+  .feature-items {
+    list-style: none;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-ink-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .check {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+</style>
