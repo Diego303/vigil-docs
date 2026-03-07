@@ -5,7 +5,8 @@ export interface VersionConfig {
 }
 
 export const VERSIONS: VersionConfig[] = [
-  { id: 'v0-3-0', label: 'v0.3.0', latest: true },
+  { id: 'v0-4-0', label: 'v0.4.0', latest: true },
+  { id: 'v0-3-0', label: 'v0.3.0', latest: false },
   { id: 'v0-2-0', label: 'v0.2.0', latest: false },
   { id: 'v0-1-0', label: 'v0.1.0', latest: false },
 ];
