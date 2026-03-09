@@ -22,7 +22,7 @@ pip install vigil-ai-cli
 ### From source (development)
 
 ```bash
-git clone https://github.com/org/vigil.git
+git clone https://github.com/Diego303/vigil-cli.git
 cd vigil
 python3.12 -m venv .venv
 source .venv/bin/activate    # Linux/macOS
