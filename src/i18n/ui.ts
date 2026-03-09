@@ -14,7 +14,7 @@ export const ui = {
       github: 'GITHUB',
     },
     hero: {
-      status: 'Status: Pre-Release v1.0',
+      status: 'Status: Release v1.0.0',
       titleLine1: 'Tu IA escribe c\u00F3digo',
       titleHighlight: 'r\u00E1pido.',
       titleLine2: 'Tambi\u00E9n vulnerabilidades.',
@@ -145,7 +145,7 @@ export const ui = {
       github: 'GITHUB',
     },
     hero: {
-      status: 'Status: Pre-Release v1.0',
+      status: 'Status: Release v1.0.0',
       titleLine1: 'Your AI writes code',
       titleHighlight: 'fast.',
       titleLine2: 'Also vulnerabilities.',
