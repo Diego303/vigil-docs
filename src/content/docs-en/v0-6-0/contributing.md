@@ -18,7 +18,7 @@ Guide for contributing to vigil's development.
 ### Clone and configure
 
 ```bash
-git clone https://github.com/org/vigil.git
+git clone https://github.com/Diego303/vigil-cli.git
 cd vigil
 
 # Create virtual environment

@@ -260,7 +260,7 @@ Static Analysis Results Interchange Format. Formato estandar de la industria par
         "driver": {
           "name": "vigil",
           "version": "0.2.0",
-          "informationUri": "https://github.com/org/vigil",
+          "informationUri": "https://github.com/Diego303/vigil-cli",
           "rules": [
             {
               "id": "DEP-001",

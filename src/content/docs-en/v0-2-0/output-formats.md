@@ -260,7 +260,7 @@ Static Analysis Results Interchange Format. Industry-standard format for static 
         "driver": {
           "name": "vigil",
           "version": "0.2.0",
-          "informationUri": "https://github.com/org/vigil",
+          "informationUri": "https://github.com/Diego303/vigil-cli",
           "rules": [
             {
               "id": "DEP-001",

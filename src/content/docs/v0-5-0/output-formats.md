@@ -292,7 +292,7 @@ Static Analysis Results Interchange Format. Formato estandar de la industria par
           "name": "vigil",
           "version": "0.5.0",
           "semanticVersion": "0.5.0",
-          "informationUri": "https://github.com/org/vigil",
+          "informationUri": "https://github.com/Diego303/vigil-cli",
           "rules": [
             {
               "id": "DEP-001",
@@ -303,7 +303,7 @@ Static Analysis Results Interchange Format. Formato estandar de la industria par
               "defaultConfiguration": {
                 "level": "error"
               },
-              "helpUri": "https://github.com/org/vigil/docs/rules/DEP-001",
+              "helpUri": "https://github.com/Diego303/vigil-cli/docs/rules/DEP-001",
               "properties": {
                 "cwe": "CWE-829",
                 "owasp": "LLM03"
