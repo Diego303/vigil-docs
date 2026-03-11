@@ -16,6 +16,8 @@ const { lang } = Astro.props;
         <polygon points="12,2 22,12 12,22 2,12" />
       </svg>
       <span>vigil</span>
+      <span class="footer-separator">|</span>
+      <a href="https://diego303.github.io/oss-ecosystem-project/" target="_blank" rel="noopener noreferrer" class="footer-oss-link">OSS Ecosystem Project</a>
     </div>
     <div class="footer-meta">
       <span>&copy; {t('footer.copyright', lang)}</span>
@@ -48,6 +50,26 @@ const { lang } = Astro.props;
     letter-spacing: 0.1em;
     font-size: 0.875rem;
     color: var(--color-ink);
+  }
+  .footer-separator {
+    color: var(--color-ink-light);
+    font-weight: 400;
+    opacity: 0.5;
+  }
+  .footer-oss-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--color-ink-light);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    transition: color 0.15s ease;
+  }
+  .footer-oss-link:hover {
+    color: var(--color-accent);
   }
   .footer-meta {
     font-family: var(--font-mono);
